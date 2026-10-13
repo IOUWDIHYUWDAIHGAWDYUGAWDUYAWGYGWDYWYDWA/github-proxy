@@ -17,7 +17,7 @@ try {
   if (/UnknownIssuer|Hyper client:|Proxy encountered an error|failed to fetch/i.test(text)) throw new Error('Discord did not render through the public tunnel');
   console.log('Public HTTPS tunnel, login and Discord proxy rendering passed.');
   await page.getByRole('button', { name: 'Çıkış', exact: true }).click();
-  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, `## Manual development preview\n\n[Open the proxy](${info.url})\n\nUser: proxy. Password: repository PROXY_PASSWORD secret (same as the local .env).\n\nExpires: ${info.expiresAt}. No automatic restart.\n\nPublic tunnel, login and Discord rendering were verified.\n`);
+  if (process.env.GITHUB_STEP_SUMMARY) await appendFile(process.env.GITHUB_STEP_SUMMARY, `## Automatic development preview\n\n[Open the proxy](${info.url})\n\nUser: proxy. Password: repository PROXY_PASSWORD secret (same as the local .env).\n\nExpires: ${info.expiresAt}. Automatically runs on schedule every 5 hours.\n\nPublic tunnel, login and Discord rendering were verified.\n`);
 } catch (error) {
   await mkdir('artifacts/preview-diagnostics', { recursive: true });
   if (page) {

@@ -1,12 +1,14 @@
-name: Manual development preview
+name: Automatic development preview
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 */5 * * *'
 permissions:
   contents: read
   pages: write
   id-token: write
 concurrency:
-  group: manual-proxy-preview
+  group: automatic-proxy-preview
   cancel-in-progress: true
 jobs:
   preview:
@@ -55,7 +57,7 @@ jobs:
           path: portal-dist
       - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         id: deployment
-      - name: Manual test window (ends automatically)
+      - name: Automatic test window (ends automatically)
         run: |
           node --input-type=module -e "import {readFile} from 'node:fs/promises';const info=JSON.parse(await readFile('/tmp/github-proxy-preview/info.json','utf8'));await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(info.expiresAt)-Date.now())));"
       - name: Stop preview

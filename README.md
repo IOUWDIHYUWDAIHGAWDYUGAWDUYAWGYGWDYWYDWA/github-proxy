@@ -2,13 +2,13 @@
 
 Adres veya arama yazarak hedef siteyi sayfa içinde açan, giriş korumalı bir **web proxy**. Uzak Chrome görüntüsü yerine HTML, CSS ve JavaScript yeniden yazımı kullanır.
 
-**Durum:** yerel uygulama, GitHub Pages giriş portalı ve manuel geliştirme önizlemesi hazır. Yerel sürüm bu bilgisayarın ağından çıkar. Manuel önizleme açıkken uygulama GitHub Actions makinesinde çalışır ve geçici Cloudflare tüneliyle erişilir. Kalıcı bir proxy/VPN hizmeti yayınlanmaz.
+**Durum:** yerel uygulama, GitHub Pages giriş portalı ve otomatik geliştirme önizlemesi hazır. Yerel sürüm bu bilgisayarın ağından çıkar. Önizleme açıkken uygulama GitHub Actions makinesinde çalışır ve geçici Cloudflare tüneliyle erişilir. Kalıcı bir proxy/VPN hizmeti yayınlanmaz.
 
 ## Web üzerinden geliştirme önizlemesi
 
 [Giriş sayfası](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/) aktif test oturumunun bağlantısını ve bitiş saatini gösterir. **Proxyyi aç** ile tünel adresine geçilir; uygulama aynı sekmede hedef siteleri proxy içinde açar. Pages yalnız giriş ekranıdır; hedef trafiğini kendisi taşımaz.
 
-[Actions → Manual development preview](https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy/actions/workflows/preview.yml) içinde `Run workflow` ile en fazla **30 dakikalık** bir test penceresi başlatılır. Oturum otomatik yenilenmez. Bir sonraki testte tünel adresi değişir. Yeni oturum, varsa önceki çalışmayı iptal eder.
+[Actions → Automatic development preview](https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy/actions/workflows/preview.yml) iş akışı her 5 saatte bir otomatik olarak tetiklenir (ayrıca `Run workflow` ile elle de başlatılabilir). Her oturumda en fazla **30 dakikalık** bir test penceresi açılır. Bir sonraki testte tünel adresi değişir. Yeni oturum, varsa önceki çalışmayı iptal eder.
 
 Kullanıcı adı `proxy`; şifre yerel `.env` dosyasındaki şifreyle aynıdır ve GitHub'da `PROXY_PASSWORD` Actions secret'ında saklanır. Şifre Pages dosyalarına veya Actions raporuna yazılmaz. Fork için önce bu secret'ı kendi repoda ayarla ve portalın repo bağlantılarını güncelle.
 
