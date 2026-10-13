@@ -69,3 +69,28 @@ test('interface fits desktop and mobile, invalid URLs report errors', async ({ p
   await page.screenshot({ path: 'artifacts/mobile.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
+
+test('a delayed initial session response cannot undo a successful login', async ({ page }) => {
+  let release, started, finished;
+  const gate = new Promise(resolve => { release = resolve; });
+  const initialStarted = new Promise(resolve => { started = resolve; });
+  const initialFinished = new Promise(resolve => { finished = resolve; });
+  let first = true;
+  await page.route('**/api/session', async route => {
+    if (!first) return route.continue();
+    first = false;
+    const response = await route.fetch();
+    started();
+    await gate;
+    await route.fulfill({ response });
+    finished();
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await initialStarted;
+  await page.getByLabel('Şifre', { exact: true }).fill('test-password-for-ci-only');
+  await page.getByRole('button', { name: 'Giriş yap' }).click();
+  await expect(page.getByText('Oturum açık', { exact: true })).toBeVisible();
+  release(); await initialFinished;
+  const frame = await openFixture(page);
+  await expect(frame.getByRole('heading', { name: 'Proxy fixture' })).toBeVisible();
+});

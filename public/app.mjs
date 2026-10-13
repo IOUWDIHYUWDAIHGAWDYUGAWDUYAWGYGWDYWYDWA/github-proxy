@@ -2,6 +2,7 @@ import { addressToUrl } from './address.mjs';
 import { downloadName, saveDownload } from './download.mjs';
 const el = id => document.getElementById(id);
 let frame, controller, initialized;
+let authRevision = 0;
 const setError = (id, error) => el(id).textContent = error?.message || String(error || '');
 
 async function api(path, body) {
@@ -82,6 +83,7 @@ async function navigate(input) {
 
 el('login-form').addEventListener('submit', async event => {
   event.preventDefault();
+  authRevision++;
   const form = event.currentTarget;
   const button = form.querySelector('button');
   button.disabled = true; setError('login-error', '');
@@ -94,6 +96,7 @@ el('login-form').addEventListener('submit', async event => {
   finally { button.disabled = false; }
 });
 el('logout').addEventListener('click', async () => {
+  authRevision++;
   try { await api('logout', {}); setAuthenticated(false); }
   catch (error) { setError('browser-error', error); }
 });
@@ -104,4 +107,8 @@ el('fullscreen').addEventListener('click', async () => {
   try { if (document.fullscreenElement) await document.exitFullscreen(); else await el('browser').requestFullscreen(); }
   catch { setError('browser-error', 'Bu tarayıcı tam ekranı desteklemiyor.'); }
 });
-try { setAuthenticated((await api('session')).authenticated); } catch (error) { setError('login-error', error); }
+const initialRevision = authRevision;
+try {
+  const state = await api('session');
+  if (initialRevision === authRevision) setAuthenticated(state.authenticated);
+} catch (error) { if (initialRevision === authRevision) setError('login-error', error); }
