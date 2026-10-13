@@ -4,7 +4,7 @@
 - Önce README.md ve PROJE.md dosyalarını oku.
 - Projenin adı github proxy.
 - Kullanıcı başlangıçta yalnız GitHub adresleri ve Actions ağından çıkış istedi. Sınırlar açıklandıktan sonra harici sunucudan çıkış yapan web proxy seçeneğini kabul etti.
-- Güncel mimari: Node.js web proxy, sayfa içinde hedef site, GitHub'da kaynak kod ve CI. Barındırma adresi henüz verilmedi.
+- Güncel mimari: Node.js web proxy, sayfa içinde hedef site, GitHub'da kaynak kod ve CI, GitHub Pages üzerinde önizleme portalı. Kalıcı barındırma hesabı verilmedi.
 - Kullanıcı harici tünel açıklamasından sonra siteyi kurmayı istedi. Manuel geliştirme önizlemesi: GitHub Pages portalı + Actions'ta en fazla 30 dakika çalışan şifreli proxy + Cloudflare Quick Tunnel. Kalıcı genel gezinme/VPN hizmetine dönüştürme veya otomatik yeniden başlatma ekleme.
 - Uzak Chrome çözümüne geçme; kabul edilen seçenek web proxy.
 - GitHub Pages üzerinde iframe/fetch kullanmanın GitHub ağından çıkış sağlamadığını açık tut.
