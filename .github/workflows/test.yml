@@ -1,0 +1,42 @@
+name: Proxy tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - name: Allow the isolated HTTP fixture to bind port 80
+        run: sudo sysctl -w net.ipv4.ip_unprivileged_port_start=0
+      - run: npm run test:e2e
+      - name: Save browser test results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: proxy-test-results
+          path: |
+            artifacts/
+            test-results/
+          retention-days: 3
+          if-no-files-found: ignore
+      - name: Write test summary
+        if: success()
+        run: |
+          echo '## github proxy' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Security and browser tests passed. Navigation, JavaScript, file upload/download and cookie separation were tested against a local fixture.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This job is a software test; it does not publish a browsing service.' >> "$GITHUB_STEP_SUMMARY"

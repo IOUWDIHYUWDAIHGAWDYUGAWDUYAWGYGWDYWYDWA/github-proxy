@@ -1,0 +1,5 @@
+# Set PROXY_DOMAIN to your hostname in the Caddy service environment.
+# Set PUBLIC_ORIGIN=https://that-hostname in the application's .env.
+{$PROXY_DOMAIN} {
+    reverse_proxy 127.0.0.1:8787
+}

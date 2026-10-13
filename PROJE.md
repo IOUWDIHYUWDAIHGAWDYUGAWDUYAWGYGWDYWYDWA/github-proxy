@@ -1,61 +1,59 @@
 # Proje ayrıntıları
 
-## Kullanıcının kesinleştirdiği amaç
+## Amaç ve güncel kapsam
 
-Projenin adı **github proxy**. Kullanıcı bir GitHub sitesini açacak, bir hedef adres yazacak ve hedef siteyi bu arayüz içinde kullanacak. Hedefe giden bağlantıyı GitHub Actions kuracak. Bu, bilgisayar genelinde çalışan bir VPN istemcisi yerine tarayıcıdan kullanılan bir web proxy isteğidir.
+Projenin adı **github proxy**. Kullanıcı bir adres yazıp hedef siteyi aynı sayfa içinde kullanmak, bağlantılara tıklamak ve dosya yükleyip indirmek istiyor. Kullanıcı, ilk GitHub-only araştırmasının ardından web proxy sürümünü seçti. Sunucu/barındırma hesabı bulunmadığını belirtti ve GitHub üzerinde yazılım testi yapılmasını istedi.
 
-Örnek senaryo: kullanıcının ağından bir siteye erişilemiyorsa hedefe Actions ağından erişilip içerik GitHub arayüzüne aktarılacak. Hedef sitenin Actions ağından erişilebilir olması ayrıca doğrulanmalıdır; erişim garantisi yoktur.
+Güncel teslim: yerel Node.js uygulaması, Türkçe arayüz, gerçek tarayıcı testleri ve GitHub Actions CI. Canlı uzak ağ çıkışı henüz kurulmadı. Yerelde çalıştırıldığında trafik bu bilgisayarın bağlantısını kullanır; aynı bilgisayarda bir site engelliyse yerel proxy o engeli tek başına kaldırmaz.
 
-## Kesin kapsam
-
-| Gereksinim | Açıklama |
-| --- | --- |
-| Giriş adresi | Yalnız GitHub adresleri; harici tünel alan adı kabul edilmiyor. |
-| Ağ çıkışı | GitHub-hosted Actions makinesi. |
-| Arayüz | Hedef siteyi arama/adres alanından açma ve içerikte gezinme. |
-| Etkileşim | JavaScript, bağlantılar, formlar, oturum/cookie işlemleri. |
-| Dosyalar | Hedef siteye yükleme; hedef siteden indirme. |
-| Sunucu | Harici VPS veya uzak Chrome sunucusu istenmiyor. |
-| Kaynak kod | Public GitHub repo; proje belgeleri bu klasörde. |
-
-## İstenen veri yolu
+## Veri yolu
 
 ```text
-Kullanıcının tarayıcısı
-    → GitHub alan adındaki giriş/aktarım katmanı
-    → GitHub Actions içindeki proxy
-    → Hedef web sitesi
-    → Aynı yol üzerinden kullanıcıya yanıt
+Tarayıcıdaki arayüz
+  → Scramjet service worker: adres/içerik yeniden yazımı
+  → BareMux + Epoxy: HTTP/TLS aktarımı
+  → Oturum kontrollü /wisp/ WebSocket endpoint'i
+  → Node.js sunucusunun internet bağlantısı
+  → Hedef web sitesi
 ```
 
-Eksik bileşen, GitHub alan adında sunulabilen çift yönlü aktarım katmanıdır. Pages bu katmanı sağlamaz; Actions job'u da kendiliğinden GitHub alan adında bir servis endpoint'i oluşturmaz.
+Arayüz ve aktarım endpoint'i aynı HTTPS origin üzerinde sunulur. iframe, hedef site adresi yerine yerel `/proxy/` yolunu açar. Hedef isteklerini Node.js sunucusu taşır. Bu, bir uzak Chrome/masaüstü görüntü akışı değildir.
 
-## Değerlendirilen yollar
+## Dosyalar
 
-| Yol | Sonuç |
+| Dosya | Görev |
 | --- | --- |
-| Pages üzerinde iframe | İstekler kullanıcının ağından çıkar. Hedefin CSP/X-Frame-Options kuralları gömülmeyi engelleyebilir. |
-| Pages JavaScript'i ile doğrudan fetch | İstekler yine kullanıcının ağından çıkar; CORS kısıtları da uygulanır. |
-| Actions içinde HTTP sunucusu | GitHub hostname'i altında doğrudan erişim adresi sağlamaz. |
-| Actions + üçüncü taraf tünel | Ek alan adı gerekir; kullanıcının açık şartına uymuyor. |
-| Harici sunucuda uzak Chrome | Kullanıcının açık şartına uymuyor. |
-| GitHub API'sini mesaj kuyruğu olarak kullanma | Teorik aktarım yapılabilir; desteklenen VPN/proxy değildir. Kota, gecikme, oturum ve gizlilik sorunları çözülmüş değildir. |
+| `server.mjs` | HTTP sunucusu, giriş, oturum, CSRF ve WebSocket yetkilendirmesi. |
+| `src/network.mjs` | Güvenli DNS çözümlemesi, IP ve port sınırlamaları. |
+| `public/index.html`, `style.css` | Türkçe, responsive arayüz. |
+| `public/app.mjs` | Proxy başlangıcı, gezinme, oturum ve dosya indirme entegrasyonu. |
+| `public/sw.js` | Scramjet service worker yönlendirmesi. |
+| `public/download.mjs` | Dosya adı korunarak, en fazla 50 MB indirme. |
+| `scripts/setup.mjs` | Mevcut ayarları ezmeden rastgele yerel şifre oluşturma. |
+| `test/security.test.mjs` | Ağ denetimi ve backend güvenlik kontrolleri. |
+| `test/e2e-server.mjs` | Yalnız testlerde kullanılan kapalı fixture sunucusu. |
+| `test/browser/proxy.spec.mjs` | Gerçek tarayıcı ile gezinme, JS, cookie ve dosya testleri. |
+| `.github/workflows/test.yml` | GitHub Actions üzerinde otomatik doğrulama. |
+| `Dockerfile`, `compose.yaml`, `deploy/Caddyfile` | Harici HTTPS barındırma için kurulum paketi. |
 
-HTTP yanıtlarını kopyalamak tek başına tam tarayıcı deneyimi sağlamaz. HTML, CSS, JavaScript ve URL yeniden yazımı; cookie izolasyonu; yönlendirmeler; WebSocket; yükleme ve indirme akışları gerekir. Roblox sitesini görüntülemek ile Roblox oyun istemcisinin ağ trafiğini taşımak farklı gereksinimlerdir. Bu projede oyun istemcisi desteği doğrulanmadı.
+## Güvenlik ve doğrulama sınırları
 
-## GitHub kullanım koşulları
+Proxy şifresi `.env` içinde, Git dışında saklanır. Oturum kimlikleri rastgele ve bellektedir; cookie HttpOnly/SameSite=Strict'tir. Canlı HTTPS origin tanımlandığında Secure flag eklenir. Çıkış, ilgili WebSocket bağlantılarını da kapatır. API POST ve WebSocket upgrade isteklerinde origin kontrolü vardır.
 
-[Actions koşullarındaki](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features#actions) sınırlama genel internet proxy kullanımını etkiliyor. Bir iş akışına “test” adı vermek, genel internet gezinmesini yazılım testi haline getirmez. GitHub'ın orantısız yük ve CDN/serverless kullanımıyla ilgili sınırlamaları da aktarım tasarımında dikkate alınmalıdır.
+DNS çözümlemesinin tüm sonuçları genel IP olmak zorundadır; bir özel IP sonucu dahi isteği reddeder. IPv4-mapped IPv6 da kontrol edilir. Bağlantıda IP yeniden çözülür ve yine bu denetimden geçer. Wisp yalnız TCP 80/443 taşır. Oturum başına en fazla dört WebSocket, bağlantı başına en fazla 64 stream kabul edilir.
 
-## Başlangıç çalışmasında yapılanlar
+Wisp 0.5.0'ın hostname başına stream sınırı uygulamasında object üzerinde yanlış iterator kullanımı bulundu; bu upstream seçenek etkinleştirilmez. Toplam stream sınırı kullanılır. DNS resolver hatası durumunda transport gerçek TCP bağlantısı kurmadan reddeder.
 
-- Yerel klasör ve `gh` bağlantısı kontrol edildi.
-- Kullanıcının gereksinimleri ve reddettiği alternatifler kaydedildi.
-- GitHub'ın birincil teknik belgeleri ve ürün koşulları kontrol edildi.
-- Proje belgeleri oluşturuldu.
+Test ortamında yalnız `proxy-fixture.test` hostname'i 127.0.0.1'e çözümlenir ve loopback için açık bir fixture istisnası uygulanır. Bu istisna yalnız `test/e2e-server.mjs` içindedir; üretim giriş noktasında yoktur, environment değişkeniyle açılmaz ve Docker imajına test dosyaları kopyalanmaz.
 
-Bu belge canlı proxy bağlantısı, erişim aşma garantisi veya uçtan uca test sonucu bildirmez.
+İçerik yeniden yazımı normal tarayıcının origin izolasyonunu birebir sağlamaz. Uygulama tek hesap için tasarlanmıştır. Scramjet/BareMux legacy sürümleri kullanılır; her site için çalışma veya güvenlik garantisi yoktur.
 
-## Devam etmek için gereken karar
+## GitHub'ın rolü
 
-Mevcut kapsam altında çalışan bir servis vaat edilmemeli. Devam için ya GitHub tarafından bu kullanımın desteklendiği/izin verildiği bir çözüm doğrulanmalı ya da kullanıcı bağlantı veya barındırma şartını değiştirmeli. Böyle bir değişiklik kullanıcıdan gelmeden VPS, Cloudflare tüneli veya uzak Chrome çözümüne geçilmemeli.
+GitHub kaynak kodu ve CI testlerini barındırır. Actions job'u kontrollü fixture'a karşı gerçek yazılım testi yürütür ve biter. Kalıcı genel gezinme sunucusu veya tünel oluşturulmaz.
+
+İlk istekteki yalnız GitHub alan adlarından, Actions üzerinden tam internet erişimi hedefi desteklenen bir dağıtım yolu değildir: [Pages statiktir](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages); Actions job'u GitHub hostname'inde web endpoint'i vermez. [Actions koşulları](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features#actions) genel internet proxy işletimini kısıtlar. Bu teknik ve kullanım sınırları bir iş akışını “test” diye adlandırarak değişmez.
+
+## Sonraki dağıtım adımı
+
+Canlı kullanım için bu servise izin veren bir Node.js/WebSocket sunucusu ve HTTPS origin gerekir. Kullanıcı henüz bir sunucu sağlamadı. Docker ve Caddy örnekleri hazırlandı fakat yerel Docker olmadığı için container dağıtımı doğrulanmadı. Sunucu verildiğinde bağlantı, HTTPS, kimlik doğrulama ve ağ çıkışı o ortamda ayrıca kontrol edilmeli.

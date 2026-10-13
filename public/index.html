@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="github proxy — siteleri tek bir pencerede aç.">
+  <title>github proxy</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2386b8ff'/%3E%3Cpath d='m28 19-13 13 13 13m8-26 13 13-13 13' stroke='%230d1420' stroke-width='5' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/scramjet/scramjet.all.js" defer></script>
+  <script src="/baremux/index.js" defer></script>
+  <script type="module" src="/app.mjs"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="github proxy ana sayfa"><span class="mark">↗</span> github <strong>proxy</strong><span class="edition">WEB</span></a>
+    <div class="top-actions"><span class="status" id="status">Giriş bekleniyor</span><button id="logout" class="text-button" hidden>Çıkış</button></div>
+  </header>
+  <main>
+    <section class="welcome" id="welcome">
+      <div class="eyebrow"><span></span> SENİN WEB PENCEREN</div>
+      <h1>Bir adres yaz.<br><span>Buradan aç.</span></h1>
+      <p class="intro">Siteleri proxy üzerinden tek bir pencerede kullan.<br>Gezin, ara, dosya yükle ve indir.</p>
+      <div class="features"><span>↔ Sunucu üzerinden bağlantı</span><span>▣ Sayfa içinde gezinme</span><span>↓ Dosya aktarımı</span></div>
+    </section>
+
+    <section class="login-card" id="login-card" aria-labelledby="login-title">
+      <div><span class="small-label">ÖZEL ERİŞİM</span><h2 id="login-title">Pencereni aç.</h2><p>Devam etmek için proxy hesabına giriş yap.</p></div>
+      <form id="login-form">
+        <label>Kullanıcı adı<input name="username" autocomplete="username" required value="proxy"></label>
+        <label>Şifre<input name="password" type="password" autocomplete="current-password" required placeholder="Proxy şifren"></label>
+        <button type="submit" class="primary">Giriş yap <span>→</span></button>
+        <p id="login-error" class="error" role="alert"></p>
+      </form>
+    </section>
+
+    <section class="browser" id="browser" hidden aria-label="Web proxy">
+      <form id="address-form" class="addressbar">
+        <button type="button" id="back" title="Geri" aria-label="Geri">←</button>
+        <button type="button" id="forward" title="İleri" aria-label="İleri">→</button>
+        <button type="button" id="reload" title="Yenile" aria-label="Yenile">↻</button>
+        <span class="address-icon" aria-hidden="true">⌕</span>
+        <input id="address" aria-label="Site adresi veya arama" placeholder="Bir site adresi veya arama yaz…" autocomplete="off" spellcheck="false" required>
+        <button type="submit" class="go">Aç <span>↗</span></button>
+        <button type="button" id="fullscreen" title="Tam ekran" aria-label="Tam ekran">⛶</button>
+      </form>
+      <div class="browser-meta"><span id="page-status" role="status">Bir adresle başla.</span><span>WEB PROXY / 01</span></div>
+      <div id="viewport">
+        <div id="empty-state"><span class="orbit">↗</span><h2>İlk durağın neresi?</h2><p>Yukarıya adres yaz veya bir başlangıç seç.</p><div class="quick-links"><button data-url="https://www.wikipedia.org/">Wikipedia ↗</button><button data-url="https://www.roblox.com/">Roblox ↗</button><button data-url="https://example.com/">Örnek site ↗</button></div></div>
+      </div>
+      <p class="error browser-error" id="browser-error" role="alert"></p>
+    </section>
+
+    <section class="notes"><div><span>01</span><h3>Adresini yaz</h3><p>Bir URL aç veya arama yap.</p></div><div><span>02</span><h3>Buradan gezin</h3><p>Bağlantılar ve formlar proxy üzerinden geçer.</p></div><div><span>03</span><h3>Dosyalarını kullan</h3><p>Sitenin yükleme ve indirme alanlarını kullan.</p></div></section>
+    <p class="compatibility">Bazı sitelerin oturum açma, CAPTCHA, video ve dosya işlemleri uyumsuz olabilir. Bu uygulama Roblox oyun istemcisinin trafiğini taşımaz.</p>
+  </main>
+  <footer><span>github proxy <span class="footer-dot">/</span> kişisel web penceresi</span><a href="https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy" target="_blank" rel="noopener noreferrer">Kaynak kod ↗</a></footer>
+</body>
+</html>
