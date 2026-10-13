@@ -1,0 +1,41 @@
+name: Website connectivity test
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: Test edilecek site
+        required: true
+        default: discord
+        type: choice
+        options:
+          - discord
+          - roblox
+          - wikipedia
+
+permissions:
+  contents: read
+
+jobs:
+  connectivity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Open the website through the application
+        env:
+          TEST_SITE: ${{ inputs.site }}
+        run: node scripts/check-site.mjs
+      - name: Save the screenshot and connection report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site-connectivity-results
+          path: artifacts/connectivity/
+          retention-days: 3
+          if-no-files-found: ignore

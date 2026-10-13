@@ -36,6 +36,8 @@ Yüklü Chrome'u kullanmak için PowerShell'de testten önce `$env:PLAYWRIGHT_CH
 
 GitHub'daki **Actions → Proxy tests** iş akışı aynı güvenlik ve tarayıcı testlerini çalıştırır. Manuel `Run workflow` da desteklenir. Test job'u dışarıya sunucu/tünel açmaz ve iş bitince kapanır. Test fixture'ı 127.0.0.1:80 portunu kullanır; bu port boş ve kullanılabilir olmalıdır.
 
+**Actions → Website connectivity test → Run workflow** ile Discord, Roblox veya Wikipedia için kısa bir gerçek HTTPS/proxy testi yapılabilir. Bu iş akışı siteyi GitHub makinesinde uygulamanın içinde açar; DNS/HTTPS raporu ve ekran görüntüsünü `site-connectivity-results` artifact'ına kaydeder. Siteye canlı bağlanılabilen bir adres oluşturmaz. Sertifika doğrulaması kapatılmaz. Rapor, sitenin bütün işlevlerinin çalıştığını garanti etmez.
+
 ## Canlı kullanım
 
 Proxy arka ucunu Node.js ve WebSocket destekleyen, kullanım koşulları bu hizmete izin veren bir sunucuda çalıştırmak gerekir. İstekler o sunucunun ağından çıkar. HTTPS gereklidir; `localhost` geliştirme istisnasıdır. GitHub Pages tek başına arka ucu çalıştırmaz.
