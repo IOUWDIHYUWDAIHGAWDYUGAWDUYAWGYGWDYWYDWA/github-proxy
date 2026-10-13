@@ -4,7 +4,7 @@
 
 Projenin adı **github proxy**. Kullanıcı bir adres yazıp hedef siteyi aynı sayfa içinde kullanmak, bağlantılara tıklamak ve dosya yükleyip indirmek istiyor. Kullanıcı, ilk GitHub-only araştırmasının ardından web proxy sürümünü seçti. Sunucu/barındırma hesabı bulunmadığını belirtti ve GitHub üzerinde yazılım testi yapılmasını istedi.
 
-Güncel teslim: yerel Node.js uygulaması, Türkçe arayüz, gerçek tarayıcı testleri ve GitHub Actions CI. Canlı uzak ağ çıkışı henüz kurulmadı. Yerelde çalıştırıldığında trafik bu bilgisayarın bağlantısını kullanır; aynı bilgisayarda bir site engelliyse yerel proxy o engeli tek başına kaldırmaz.
+Güncel teslim: yerel Node.js uygulaması, Türkçe arayüz, gerçek tarayıcı testleri, GitHub Actions CI ve süreli geliştirme önizlemesi. Kullanıcı harici tünel seçeneği açıklandıktan sonra site kurulmasını istedi. GitHub Pages giriş portalı; Actions makinesi ise en fazla 30 dakika süren manuel geliştirme oturumunun arka ucudur. Kalıcı genel gezinme/VPN hizmeti kurulmaz. Yerel sürüm hâlâ bu bilgisayarın bağlantısını kullanır.
 
 ## Veri yolu
 
@@ -50,7 +50,7 @@ Test ortamında yalnız `proxy-fixture.test` hostname'i 127.0.0.1'e çözümleni
 
 ## GitHub'ın rolü
 
-GitHub kaynak kodu ve CI testlerini barındırır. Actions job'u kontrollü fixture'a karşı gerçek yazılım testi yürütür ve biter. Kalıcı genel gezinme sunucusu veya tünel oluşturulmaz.
+GitHub kaynak kodu, Pages portalı ve CI testlerini barındırır. Normal CI kontrollü fixture'a karşı test yürütür ve biter. Manuel geliştirme önizlemesinde şifreli uygulama 30 dakika çalışır; Cloudflare Quick Tunnel adresine erişilir ve süre sonunda tünel ve sunucu kapanır. Otomatik yeniden başlatma yoktur. Portalın durum dosyasında yalnız tünel adresi ve bitiş saati bulunur; parola bulunmaz. GitHub-only bağlantı şartı bu önizlemede geçerli değildir.
 
 İlk istekteki yalnız GitHub alan adlarından, Actions üzerinden tam internet erişimi hedefi desteklenen bir dağıtım yolu değildir: [Pages statiktir](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages); Actions job'u GitHub hostname'inde web endpoint'i vermez. [Actions koşulları](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features#actions) genel internet proxy işletimini kısıtlar. Bu teknik ve kullanım sınırları bir iş akışını “test” diye adlandırarak değişmez.
 

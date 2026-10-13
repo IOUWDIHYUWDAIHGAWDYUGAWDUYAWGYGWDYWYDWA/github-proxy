@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark"><meta name="description" content="github proxy geliştirme önizlemesi">
+  <title>github proxy · Önizleme</title>
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="portal.css">
+  <script type="module" src="portal.mjs"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./"><span class="mark">↗</span>github <strong>proxy</strong><span class="edition">PREVIEW</span></a><span class="status" id="status">Durum kontrol ediliyor</span></header>
+  <main>
+    <section class="welcome"><div class="eyebrow"><span></span> GELİŞTİRME ÖNİZLEMESİ</div><h1>Web penceren.<br><span>Şimdi uzakta.</span></h1><p class="intro">Proxy uygulamasını GitHub Actions üzerinde dene.<br>Giriş yap, bir adres yaz ve siteyi proxy içinde aç.</p></section>
+    <section class="preview-card">
+      <div><span class="small-label" id="session-label">OTURUM DURUMU</span><h2 id="session-title">Bağlantı hazırlanıyor.</h2><p id="session-description">Önizleme bilgileri yükleniyor.</p><p id="expiry" class="expiry"></p></div>
+      <div class="preview-actions"><a id="open-preview" class="primary" aria-disabled="true" target="_blank" rel="noopener noreferrer">Proxyyi aç <span>↗</span></a><button id="refresh" class="refresh">Durumu yenile ↻</button><a id="workflow" class="workflow" target="_blank" rel="noopener noreferrer">Yeni test oturumu başlat ↗</a></div>
+    </section>
+    <section class="notes"><div><span>01</span><h3>Proxyyi aç</h3><p>Bağlantı ayrı bir HTTPS sekmesinde açılır.</p></div><div><span>02</span><h3>Giriş yap</h3><p>Kullanıcı adı: proxy. Şifre, sana ait yerel .env dosyasında.</p></div><div><span>03</span><h3>Uygulamayı dene</h3><p>Gezinme, formlar ve dosya aktarımını kontrol et.</p></div></section>
+    <p class="compatibility">Bu sayfa GitHub Pages'te barındırılır. Proxy bağlantısı geçici bir Cloudflare tüneli üzerinden Actions makinesine ulaşır. Oturum en fazla 30 dakika sürer; sonunda bağlantı kapanır. Kalıcı bir VPN hizmeti değildir. Bazı siteler uyumsuz olabilir.</p>
+  </main>
+  <footer><span>github proxy / geliştirme önizlemesi</span><a id="source" target="_blank" rel="noopener noreferrer">Kaynak kod ↗</a></footer>
+</body>
+</html>

@@ -2,7 +2,17 @@
 
 Adres veya arama yazarak hedef siteyi sayfa içinde açan, giriş korumalı bir **web proxy**. Uzak Chrome görüntüsü yerine HTML, CSS ve JavaScript yeniden yazımı kullanır.
 
-**Durum:** yerel uygulama hazır. Genel erişime açık bir proxy sunucusu yayınlanmadı. Yerelde çalıştırıldığında hedef sitelere bu bilgisayarın ağından çıkar. GitHub Actions yalnız yazılımın otomatik testlerini çalıştırır.
+**Durum:** yerel uygulama, GitHub Pages giriş portalı ve manuel geliştirme önizlemesi hazır. Yerel sürüm bu bilgisayarın ağından çıkar. Manuel önizleme açıkken uygulama GitHub Actions makinesinde çalışır ve geçici Cloudflare tüneliyle erişilir. Kalıcı bir proxy/VPN hizmeti yayınlanmaz.
+
+## Web üzerinden geliştirme önizlemesi
+
+[Giriş sayfası](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/) aktif test oturumunun bağlantısını ve bitiş saatini gösterir. **Proxyyi aç** ile tünel adresine geçilir; uygulama aynı sekmede hedef siteleri proxy içinde açar. Pages yalnız giriş ekranıdır; hedef trafiğini kendisi taşımaz.
+
+[Actions → Manual development preview](https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy/actions/workflows/preview.yml) içinde `Run workflow` ile en fazla **30 dakikalık** bir test penceresi başlatılır. Oturum otomatik yenilenmez. Bir sonraki testte tünel adresi değişir. Yeni oturum, varsa önceki çalışmayı iptal eder.
+
+Kullanıcı adı `proxy`; şifre yerel `.env` dosyasındaki şifreyle aynıdır ve GitHub'da `PROXY_PASSWORD` Actions secret'ında saklanır. Şifre Pages dosyalarına veya Actions raporuna yazılmaz. Fork için önce bu secret'ı kendi repoda ayarla ve portalın repo bağlantılarını güncelle.
+
+Yayın öncesinde public HTTPS tüneli, giriş ve Discord'un proxy içinde görüntülenmesi otomatik kontrol edilir. Bu geliştirme önizlemesi genel gezinme için kalıcı sunucuya dönüştürülmez. Cloudflare Quick Tunnel'ın uptime garantisi ve SSE desteği yoktur.
 
 ## Yerelde başlatma
 
@@ -40,7 +50,7 @@ GitHub'daki **Actions → Proxy tests** iş akışı aynı güvenlik ve tarayıc
 
 ## Canlı kullanım
 
-Proxy arka ucunu Node.js ve WebSocket destekleyen, kullanım koşulları bu hizmete izin veren bir sunucuda çalıştırmak gerekir. İstekler o sunucunun ağından çıkar. HTTPS gereklidir; `localhost` geliştirme istisnasıdır. GitHub Pages tek başına arka ucu çalıştırmaz.
+Kalıcı proxy kullanımında arka ucu Node.js ve WebSocket destekleyen, kullanım koşulları bu hizmete izin veren bir sunucuda çalıştırmak gerekir. İstekler o sunucunun ağından çıkar. HTTPS gereklidir; `localhost` geliştirme istisnasıdır. GitHub Pages tek başına arka ucu çalıştırmaz. Yukarıdaki manuel geliştirme önizlemesi süreli bir test ortamıdır.
 
 Kurulum paketi: [Dockerfile](Dockerfile), [compose.yaml](compose.yaml) ve [Caddy örneği](deploy/Caddyfile). Docker/Caddy dağıtımı bu bilgisayarda çalıştırılarak doğrulanmadı; bir canlı barındırma hesabı henüz sağlanmadı.
 

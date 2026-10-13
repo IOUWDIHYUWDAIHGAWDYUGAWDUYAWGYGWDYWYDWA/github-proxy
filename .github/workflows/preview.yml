@@ -1,0 +1,78 @@
+name: Manual development preview
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: manual-proxy-preview
+  cancel-in-progress: true
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Install verified tunnel client
+        run: |
+          curl --fail --location --retry 3 --output /tmp/cloudflared https://github.com/cloudflare/cloudflared/releases/download/2026.10.0/cloudflared-linux-amd64
+          echo 'd33ff2d14475178d2012c2c56beba87389ac5ded27649519f198a7d3134a99db  /tmp/cloudflared' | sha256sum --check
+          chmod 700 /tmp/cloudflared
+      - name: Start bounded development preview
+        env:
+          PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+        run: |
+          node scripts/preview-runner.mjs > /tmp/proxy-preview.log 2>&1 &
+          echo $! > /tmp/proxy-preview.pid
+          for attempt in $(seq 1 120); do
+            if test -f /tmp/github-proxy-preview/info.json; then exit 0; fi
+            if ! kill -0 "$(cat /tmp/proxy-preview.pid)" 2>/dev/null; then cat /tmp/proxy-preview.log; exit 1; fi
+            sleep 2
+          done
+          cat /tmp/proxy-preview.log
+          exit 1
+      - name: Verify public application before publishing
+        env:
+          PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+        run: node scripts/verify-preview.mjs
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Build active portal
+        env:
+          PREVIEW_INFO: /tmp/github-proxy-preview/info.json
+        run: node scripts/build-portal.mjs
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: portal-dist
+      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        id: deployment
+      - name: Manual test window (ends automatically)
+        run: |
+          node --input-type=module -e "import {readFile} from 'node:fs/promises';const info=JSON.parse(await readFile('/tmp/github-proxy-preview/info.json','utf8'));await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(info.expiresAt)-Date.now())));"
+      - name: Stop preview
+        if: always()
+        run: |
+          if test -f /tmp/proxy-preview.pid; then kill "$(cat /tmp/proxy-preview.pid)" 2>/dev/null || true; fi
+      - name: Build closed portal
+        if: always() && !cancelled()
+        run: node scripts/build-portal.mjs
+      - name: Upload closed portal
+        if: always() && !cancelled()
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: portal-dist
+          name: github-pages-closed
+      - name: Publish closed portal
+        if: always() && !cancelled()
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        with:
+          artifact_name: github-pages-closed
