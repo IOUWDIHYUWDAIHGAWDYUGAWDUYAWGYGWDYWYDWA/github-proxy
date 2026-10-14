@@ -17,8 +17,12 @@ function render() {
   if (active) {
     byId('open-preview').href = session.url;
     const end = new Intl.DateTimeFormat('tr-TR', { timeZone: 'Europe/Istanbul', hour: '2-digit', minute: '2-digit' }).format(new Date(session.expiresAt));
-    byId('expiry').textContent = `Yaklaşık ${Math.ceil(remaining / 60000)} dakika kaldı · Bitiş ${end} (Türkiye saati)`;
-  } else { byId('open-preview').removeAttribute('href'); byId('expiry').textContent = 'Oturumlar kendiliğinden yenilenmez.'; }
+    const remMinutes = Math.ceil(remaining / 60000);
+    const hours = Math.floor(remMinutes / 60);
+    const mins = remMinutes % 60;
+    const timeStr = hours > 0 ? `${hours} saat ${mins} dakika kaldı` : `${mins} dakika kaldı`;
+    byId('expiry').textContent = `Yaklaşık ${timeStr} · Bitiş ${end} (Türkiye saati)`;
+  } else { byId('open-preview').removeAttribute('href'); byId('expiry').textContent = 'Yeni oturum otomatik başlatılıyor veya bekleniyor...'; }
 }
 async function refresh() {
   try {

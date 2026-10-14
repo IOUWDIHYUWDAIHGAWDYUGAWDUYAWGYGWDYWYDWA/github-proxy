@@ -13,7 +13,7 @@ concurrency:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    timeout-minutes: 38
+    timeout-minutes: 330
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -33,6 +33,7 @@ jobs:
       - name: Start bounded development preview
         env:
           PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
+          PREVIEW_DURATION_MS: '17700000'
         run: |
           node scripts/preview-runner.mjs > /tmp/proxy-preview.log 2>&1 &
           echo $! > /tmp/proxy-preview.pid
@@ -60,6 +61,15 @@ jobs:
       - name: Automatic test window (ends automatically)
         run: |
           node --input-type=module -e "import {readFile} from 'node:fs/promises';const info=JSON.parse(await readFile('/tmp/github-proxy-preview/info.json','utf8'));await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(info.expiresAt)-Date.now())));"
+      - name: Trigger next run automatically
+        if: always() && !cancelled()
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_TRIGGER_TOKEN }}
+        run: |
+          if [ -n "$GH_TOKEN" ]; then
+            echo "Triggering next preview run to keep preview running..."
+            gh workflow run preview.yml --repo "$GITHUB_REPOSITORY" || true
+          fi
       - name: Stop preview
         if: always()
         run: |

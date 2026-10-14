@@ -27,10 +27,11 @@ try {
     tunnel.once('error', reject);
     tunnel.once('exit', () => { clearTimeout(timeout); reject(new Error('Tunnel stopped during startup')); });
   });
-  const expiresAt = new Date(Date.now() + 30 * 60_000).toISOString();
-  server = createProxyServer({ publicOrigin: url, sessionMs: 30 * 60_000 });
+  const durationMs = Number(process.env.PREVIEW_DURATION_MS) || (5 * 60 * 60_000);
+  const expiresAt = new Date(Date.now() + durationMs).toISOString();
+  server = createProxyServer({ publicOrigin: url, sessionMs: durationMs });
   server.listen(8787, '127.0.0.1'); await once(server, 'listening');
-  timer = setTimeout(stop, 30 * 60_000);
+  timer = setTimeout(stop, durationMs);
   tunnel.on('exit', stop);
   for (let attempt = 0; attempt < 30; attempt++) {
     try {

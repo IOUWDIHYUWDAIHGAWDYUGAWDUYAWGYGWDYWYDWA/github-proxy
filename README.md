@@ -8,7 +8,7 @@ Adres veya arama yazarak hedef siteyi sayfa içinde açan, giriş korumalı bir 
 
 [Giriş sayfası](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/) aktif test oturumunun bağlantısını ve bitiş saatini gösterir. **Proxyyi aç** ile tünel adresine geçilir; uygulama aynı sekmede hedef siteleri proxy içinde açar. Pages yalnız giriş ekranıdır; hedef trafiğini kendisi taşımaz.
 
-[Actions → Automatic development preview](https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy/actions/workflows/preview.yml) iş akışı her 5 saatte bir otomatik olarak tetiklenir (ayrıca `Run workflow` ile elle de başlatılabilir). Her oturumda en fazla **30 dakikalık** bir test penceresi açılır. Bir sonraki testte tünel adresi değişir. Yeni oturum, varsa önceki çalışmayı iptal eder.
+[Actions → Automatic development preview](https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy/actions/workflows/preview.yml) iş akışı her oturumda yaklaşık **5 saatlik** bir test penceresi açar ve süre bitiminde bir sonrakini otomatik olarak başlatır (ayrıca `Run workflow` ile elle de başlatılabilir). Bir sonraki testte tünel adresi değişir. Yeni oturum, varsa önceki çalışmayı iptal eder.
 
 Kullanıcı adı `proxy`; şifre yerel `.env` dosyasındaki şifreyle aynıdır ve GitHub'da `PROXY_PASSWORD` Actions secret'ında saklanır. Şifre Pages dosyalarına veya Actions raporuna yazılmaz. Fork için önce bu secret'ı kendi repoda ayarla ve portalın repo bağlantılarını güncelle.
 
