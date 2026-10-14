@@ -42,7 +42,9 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-    res.setHeader('Cache-Control', 'no-store');
+    if (!req.path.startsWith('/scramjet') && !req.path.startsWith('/baremux') && !req.path.startsWith('/epoxy') && !req.path.match(/\.(?:js|mjs|wasm|css|svg|png|ico|woff2?)$/)) {
+      res.setHeader('Cache-Control', 'no-store');
+    }
     next();
   });
   app.get('/healthz', (req, res) => res.json({ status: 'ok' }));
@@ -78,20 +80,37 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
     res.setHeader('Set-Cookie', cookie('', 0));
     res.json({ authenticated: false });
   });
-  app.use('/scramjet', express.static(scramjetPath, { dotfiles: 'deny', index: false, maxAge: 0 }));
-  app.use('/baremux', express.static(baremuxPath, { dotfiles: 'deny', index: false, maxAge: 0 }));
-  app.use('/epoxy', express.static(epoxyPath, { dotfiles: 'deny', index: false, maxAge: 0 }));
-  app.use(express.static(join(root, 'public'), { dotfiles: 'deny', maxAge: 0 }));
+  const staticCache = {
+    dotfiles: 'deny',
+    index: false,
+    maxAge: '1d',
+    setHeaders: res => res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800')
+  };
+  app.use('/scramjet', express.static(scramjetPath, staticCache));
+  app.use('/baremux', express.static(baremuxPath, staticCache));
+  app.use('/epoxy', express.static(epoxyPath, staticCache));
+  app.use(express.static(join(root, 'public'), {
+    dotfiles: 'deny',
+    maxAge: '1h',
+    setHeaders: (res, path) => {
+      if (path.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache');
+      else res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+    }
+  }));
   app.use((req, res) => res.status(404).send('Sayfa bulunamadı.'));
   app.use((err, req, res, next) => res.status(err.status || 500).json({ error: 'İstek işlenemedi.' }));
-  server.on('connection', socket => { sockets.add(socket); socket.on('close', () => sockets.delete(socket)); });
+  server.on('connection', socket => {
+    socket.setNoDelay(true);
+    sockets.add(socket);
+    socket.on('close', () => sockets.delete(socket));
+  });
   server.on('upgrade', (req, socket, head) => {
     const reject = code => socket.end(`HTTP/1.1 ${code}\r\nConnection: close\r\n\r\n`);
     if (req.url !== '/wisp/') return reject('404 Not Found');
     if (req.headers.origin !== originFor(req)) return reject('403 Forbidden');
     const session = sessionFor(req);
     if (!session) return reject('401 Unauthorized');
-    if (session.sockets.size >= 4) return reject('429 Too Many Requests');
+    if (session.sockets.size >= 16) return reject('429 Too Many Requests');
     session.sockets.add(socket);
     const timer = setTimeout(() => socket.destroy(), session.expires - Date.now());
     timer.unref();

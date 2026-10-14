@@ -26,11 +26,11 @@ export function configureNetwork({ resolver = createSafeResolver(), ports = [80,
     allow_udp_streams: false,
     allow_tcp_streams: true,
     port_whitelist: ports,
-    stream_limit_total: 64,
+    stream_limit_total: 256,
     // wisp-js 0.5.0 iterates an object incorrectly when this limit is enabled.
     stream_limit_per_host: -1,
     dns_method: resolver,
-    dns_ttl: 0,
+    dns_ttl: 300,
     parse_real_ip: false,
     hostname_blacklist: [/^localhost\.?$/i, /\.(?:localhost|local|internal)\.?$/i]
   });

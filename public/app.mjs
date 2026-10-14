@@ -18,6 +18,7 @@ function setAuthenticated(authenticated) {
   el('status').textContent = authenticated ? 'Oturum açık' : 'Giriş bekleniyor';
   el('status').classList.toggle('ready', authenticated);
   if (!authenticated) { frame?.frame.remove(); frame = undefined; document.body.classList.remove('browsing'); el('empty-state').hidden = false; }
+  else { initialized ||= initialize().catch(error => { initialized = undefined; setError('browser-error', error); }); }
 }
 
 async function initialize() {

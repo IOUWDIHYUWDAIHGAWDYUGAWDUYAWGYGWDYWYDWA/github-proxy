@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { createProxyServer } from '../server.mjs';
 
 const infoPath = '/tmp/github-proxy-preview/info.json';
-const tunnel = spawn('/tmp/cloudflared', ['tunnel', '--no-autoupdate', '--protocol', 'http2', '--url', 'http://127.0.0.1:8787'], { stdio: ['ignore', 'pipe', 'pipe'] });
+const tunnel = spawn('/tmp/cloudflared', ['tunnel', '--no-autoupdate', '--protocol', 'auto', '--url', 'http://127.0.0.1:8787'], { stdio: ['ignore', 'pipe', 'pipe'] });
 let server, timer, stopped = false;
 async function stop() {
   if (stopped) return;
