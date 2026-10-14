@@ -101,6 +101,7 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
   app.use((err, req, res, next) => res.status(err.status || 500).json({ error: 'İstek işlenemedi.' }));
   server.on('connection', socket => {
     socket.setNoDelay(true);
+    socket.setKeepAlive(true, 15_000);
     sockets.add(socket);
     socket.on('close', () => sockets.delete(socket));
   });
@@ -117,8 +118,9 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
     socket.on('close', () => { clearTimeout(timer); session.sockets.delete(socket); });
     wisp.routeRequest(req, socket, head);
   });
-  server.requestTimeout = 30_000;
-  server.headersTimeout = 15_000;
+  server.keepAliveTimeout = 65_000;
+  server.headersTimeout = 66_000;
+  server.requestTimeout = 60_000;
   server.shutdown = () => { for (const socket of sockets) socket.destroy(); return new Promise(resolve => server.close(resolve)); };
   return server;
 }

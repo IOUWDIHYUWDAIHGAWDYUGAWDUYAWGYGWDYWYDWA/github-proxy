@@ -8,6 +8,10 @@
   <title>github proxy</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2386b8ff'/%3E%3Cpath d='m28 19-13 13 13 13m8-26 13 13-13 13' stroke='%230d1420' stroke-width='5' fill='none'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/style.css">
+  <link rel="preload" href="/scramjet/scramjet.wasm.wasm" as="fetch" type="application/wasm" crossorigin>
+  <link rel="preload" href="/scramjet/scramjet.sync.js" as="script">
+  <link rel="preload" href="/baremux/worker.js" as="script">
+  <link rel="preload" href="/epoxy/index.mjs" as="script" crossorigin>
   <script src="/scramjet/scramjet.all.js" defer></script>
   <script src="/baremux/index.js" defer></script>
   <script type="module" src="/app.mjs"></script>

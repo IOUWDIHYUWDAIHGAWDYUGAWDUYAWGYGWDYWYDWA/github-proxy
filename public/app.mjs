@@ -53,6 +53,7 @@ async function navigate(input) {
       frame.frame.title = 'Proxy üzerinden açılan web sitesi';
       frame.frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-modals');
       frame.frame.setAttribute('allow', 'fullscreen');
+      frame.frame.setAttribute('loading', 'eager');
       frame.frame.addEventListener('load', () => {
         el('page-status').textContent = 'Sayfa yüklendi';
         try { el('address').value = frame.url.href; } catch { /* Some engine error pages have no client URL. */ }
