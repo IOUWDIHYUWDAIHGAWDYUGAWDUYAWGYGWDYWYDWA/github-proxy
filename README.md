@@ -44,6 +44,16 @@ npm run test:e2e
 
 Yüklü Chrome'u kullanmak için PowerShell'de testten önce `$env:PLAYWRIGHT_CHANNEL = 'chrome'` ayarla.
 
+Test proxy portu 8081 kullanımda ise `$env:TEST_PROXY_PORT = '18081'` ile farklı bir port seçilebilir. Hedef fixture portu 80 yine boş olmalıdır.
+
+## Tünel ve DNS iyileştirmeleri
+
+DNS sonuçları özel ağ/IP kontrolünden sonra en fazla 30 saniye, 256 alan adıyla sınırlı olarak saklanır. Aynı alan adına eşzamanlı bağlantılar tek DNS sorgusunu paylaşır; başarısız sorgular saklanmaz. `wisp-js` paketindeki TTL milisaniye hesabına güvenmek yerine doğrulanan sonuçlar uygulama katmanında önbelleğe alınır.
+
+Cloudflared mevcut otomatik QUIC/HTTP2 seçimini kullanır; IPv4/IPv6 seçimi de `auto` ayarlanır. Hazır olma kontrolü toplam süre sınırı ve kısa artan beklemelerle yapılır. Başarısız HTTP yanıtları tüketilip bağlantılar serbest bırakılır. Tünel bilgisi atomik yazılır; kapanışta kaldırılır ve beklenmedik süreç kapanışı runner'da hata olarak bildirilir. Log boruları, keşif bittikten sonra da tüketilir; birikerek tüneli durdurmaz. Bu değişiklikler çalışma süresini veya yeniden başlatma planını düzenlemez.
+
+Bu iyileştirmeler için sentetik DNS ve tünel testleri vardır; gerçek internet gecikmesi veya bant genişliği artışı yüzdesi ölçülmüş değildir. [Cloudflare protokol ve IP parametreleri](https://developers.cloudflare.com/tunnel/reference/run-parameters/) koşullara göre seçim yapar; sabit bir hız artışı garanti etmez.
+
 GitHub'daki **Actions → Proxy tests** iş akışı aynı güvenlik ve tarayıcı testlerini çalıştırır. Manuel `Run workflow` da desteklenir. Test job'u dışarıya sunucu/tünel açmaz ve iş bitince kapanır. Test fixture'ı 127.0.0.1:80 portunu kullanır; bu port boş ve kullanılabilir olmalıdır.
 
 **Actions → Website connectivity test → Run workflow** ile Discord, Roblox veya Wikipedia için kısa bir gerçek HTTPS/proxy testi yapılabilir. Bu iş akışı siteyi GitHub makinesinde uygulamanın içinde açar; DNS/HTTPS raporu ve ekran görüntüsünü `site-connectivity-results` artifact'ına kaydeder. Siteye canlı bağlanılabilen bir adres oluşturmaz. Sertifika doğrulaması kapatılmaz. Rapor, sitenin bütün işlevlerinin çalıştığını garanti etmez.

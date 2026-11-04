@@ -21,7 +21,7 @@ test('DNS resolver rejects mixed public/private answers and rebinding', async ()
   const mixed = createSafeResolver(async () => [{ address: '1.1.1.1', family: 4 }, { address: '127.0.0.1', family: 4 }]);
   await assert.rejects(mixed('example.test'));
   let calls = 0;
-  const resolver = createSafeResolver(async () => [{ address: calls++ ? '169.254.169.254' : '1.1.1.1', family: 4 }]);
+  const resolver = createSafeResolver(async () => [{ address: calls++ ? '169.254.169.254' : '1.1.1.1', family: 4 }], { ttlMs: 0 });
   assert.equal(await resolver('example.test'), '1.1.1.1');
   await assert.rejects(resolver('example.test'));
 });

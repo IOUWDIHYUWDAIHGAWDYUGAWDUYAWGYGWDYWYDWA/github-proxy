@@ -39,6 +39,6 @@ const proxy = createProxyServer({ password: 'test-password-for-ci-only', network
 } });
 // Explicit exception for this isolated fixture; not configurable by production env.
 wisp.options.allow_loopback_ips = true;
-proxy.listen(8081, '127.0.0.1');
+proxy.listen(Number(process.env.TEST_PROXY_PORT || 8081), '127.0.0.1');
 async function stop() { await proxy.shutdown(); fixture.closeAllConnections(); fixture.close(() => process.exit(0)); }
 process.on('SIGTERM', stop); process.on('SIGINT', stop);

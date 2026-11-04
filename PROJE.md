@@ -40,7 +40,7 @@ Arayüz ve aktarım endpoint'i aynı HTTPS origin üzerinde sunulur. iframe, hed
 
 Proxy şifresi `.env` içinde, Git dışında saklanır. Oturum kimlikleri rastgele ve bellektedir; cookie HttpOnly/SameSite=Strict'tir. Canlı HTTPS origin tanımlandığında Secure flag eklenir. Çıkış, ilgili WebSocket bağlantılarını da kapatır. API POST ve WebSocket upgrade isteklerinde origin kontrolü vardır.
 
-DNS çözümlemesinin tüm sonuçları genel IP olmak zorundadır; bir özel IP sonucu dahi isteği reddeder. IPv4-mapped IPv6 da kontrol edilir. Bağlantıda IP yeniden çözülür ve yine bu denetimden geçer. Wisp yalnız TCP 80/443 taşır. Oturum başına en fazla dört WebSocket, bağlantı başına en fazla 64 stream kabul edilir.
+DNS çözümlemesinin tüm sonuçları genel IP olmak zorundadır; bir özel IP sonucu dahi isteği reddeder. IPv4-mapped IPv6 da kontrol edilir. Doğrulanmış IP'ler 30 saniye ve 256 alan adıyla sınırlı önbellekte tutulur; eşzamanlı aynı alan adı sorguları tekleştirilir. Süre dolunca yeniden çözümleme ve doğrulama yapılır; bağlantılar doğrulanmış sayısal IP'ye kurulur. Wisp yalnız TCP 80/443 taşır. Güncel sürümde oturum başına en fazla 16 WebSocket, bağlantı başına en fazla 256 stream kabul edilir.
 
 Wisp 0.5.0'ın hostname başına stream sınırı uygulamasında object üzerinde yanlış iterator kullanımı bulundu; bu upstream seçenek etkinleştirilmez. Toplam stream sınırı kullanılır. DNS resolver hatası durumunda transport gerçek TCP bağlantısı kurmadan reddeder.
 

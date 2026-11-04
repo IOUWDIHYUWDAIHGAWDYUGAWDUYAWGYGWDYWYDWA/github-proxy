@@ -10,11 +10,30 @@ export function isPublicAddress(value) {
   } catch { return false; }
 }
 
-export function createSafeResolver(resolve = lookup) {
+export function createSafeResolver(resolve = lookup, { ttlMs = 30_000, maxEntries = 256, now = Date.now } = {}) {
+  if (!Number.isFinite(ttlMs) || ttlMs < 0 || !Number.isInteger(maxEntries) || maxEntries < 1) throw new Error('Invalid DNS cache settings');
+  const cache = new Map();
+  const pending = new Map();
   return async hostname => {
-    const records = await resolve(hostname, { all: true, verbatim: true });
-    if (!records.length || records.some(record => !isPublicAddress(record.address))) throw new Error('Hedef genel internette değil.');
-    return records.find(record => record.family === 4)?.address || records[0].address;
+    const key = hostname.toLowerCase();
+    const entry = cache.get(key);
+    if (entry?.expires > now()) return entry.address;
+    cache.delete(key);
+    if (pending.has(key)) return pending.get(key);
+    if (pending.size >= maxEntries) throw new Error('DNS çözümleme sınırına ulaşıldı.');
+    const query = (async () => {
+      const records = await resolve(key, { all: true, verbatim: true });
+      if (!records.length || records.some(record => !isPublicAddress(record.address))) throw new Error('Hedef genel internette değil.');
+      const address = records.find(record => record.family === 4)?.address || records[0].address;
+      if (ttlMs > 0) {
+        for (const [name, item] of cache) if (item.expires <= now()) cache.delete(name);
+        if (cache.size >= maxEntries) cache.delete(cache.keys().next().value);
+        cache.set(key, { address, expires: now() + ttlMs });
+      }
+      return address;
+    })();
+    pending.set(key, query);
+    try { return await query; } finally { pending.delete(key); }
   };
 }
 
@@ -30,7 +49,9 @@ export function configureNetwork({ resolver = createSafeResolver(), ports = [80,
     // wisp-js 0.5.0 iterates an object incorrectly when this limit is enabled.
     stream_limit_per_host: -1,
     dns_method: resolver,
-    dns_ttl: 300,
+    // wisp-js measures this value in milliseconds, despite its documentation.
+    // Cache validated public addresses in createSafeResolver instead.
+    dns_ttl: 0,
     parse_real_ip: false,
     hostname_blacklist: [/^localhost\.?$/i, /\.(?:localhost|local|internal)\.?$/i]
   });
