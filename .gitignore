@@ -11,3 +11,6 @@ test-results/
 playwright-report/
 artifacts/
 portal-dist/
+desktop/dist/
+*.conf
+*.conf.dpapi

@@ -2,6 +2,8 @@
 
 Adres veya arama yazarak hedef siteyi sayfa içinde açan, giriş korumalı bir **web proxy**. Uzak Chrome görüntüsü yerine HTML, CSS ve JavaScript yeniden yazımı kullanır.
 
+Tüm bilgisayar için ayrı Windows istemcisi: [github proxy VPN](desktop/README.md). Tailscale kullanmaz; resmî WireGuard bileşeni ve ayrı sunucuya ait `.conf` gerektirir. Web proxy URL'sini VPN sunucusuna dönüştürmez.
+
 **Durum:** yerel uygulama, GitHub Pages giriş portalı ve otomatik geliştirme önizlemesi hazır. Yerel sürüm bu bilgisayarın ağından çıkar. Önizleme açıkken uygulama GitHub Actions makinesinde çalışır ve geçici Cloudflare tüneliyle erişilir. Kalıcı bir proxy/VPN hizmeti yayınlanmaz.
 
 ## Web üzerinden geliştirme önizlemesi
