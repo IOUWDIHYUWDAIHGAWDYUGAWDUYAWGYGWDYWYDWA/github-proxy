@@ -1,6 +1,11 @@
 name: Automatic development preview
 on:
   workflow_dispatch:
+    inputs:
+      duration_hours:
+        description: 'Tünel açık kalma süresi (saat, örn: 5.75)'
+        required: false
+        default: '5.75'
   schedule:
     - cron: '0 */5 * * *'
 permissions:
@@ -13,7 +18,7 @@ concurrency:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 355
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -33,8 +38,15 @@ jobs:
       - name: Start bounded development preview
         env:
           PROXY_PASSWORD: ${{ secrets.PROXY_PASSWORD }}
-          PREVIEW_DURATION_MS: '17700000'
+          INPUT_DURATION_HOURS: ${{ github.event.inputs.duration_hours }}
         run: |
+          if [ -n "$INPUT_DURATION_HOURS" ]; then
+            DURATION_MS=$(node -e "const h = parseFloat(process.env.INPUT_DURATION_HOURS); console.log(Math.round(Math.min(350 * 60 * 1000, Math.max(60000, h * 3600000))))")
+          else
+            DURATION_MS=20700000
+          fi
+          export PREVIEW_DURATION_MS="$DURATION_MS"
+          echo "PREVIEW_DURATION_MS: $PREVIEW_DURATION_MS"
           node scripts/preview-runner.mjs > /tmp/proxy-preview.log 2>&1 &
           echo $! > /tmp/proxy-preview.pid
           for attempt in $(seq 1 120); do
