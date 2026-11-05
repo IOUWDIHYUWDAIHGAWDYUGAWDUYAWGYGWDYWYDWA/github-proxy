@@ -37,15 +37,15 @@ export function createSafeResolver(resolve = lookup, { ttlMs = 30_000, maxEntrie
   };
 }
 
-export function configureNetwork({ resolver = createSafeResolver(), ports = [80, 443] } = {}) {
+export function configureNetwork({ resolver = createSafeResolver(), ports = null } = {}) {
   Object.assign(wisp.options, {
     allow_direct_ip: false,
     allow_private_ips: false,
     allow_loopback_ips: false,
     allow_udp_streams: false,
     allow_tcp_streams: true,
-    port_whitelist: ports,
-    stream_limit_total: 256,
+    port_whitelist: ports, // null means all TCP ports (1-65535) are allowed
+    stream_limit_total: 512,
     // wisp-js 0.5.0 iterates an object incorrectly when this limit is enabled.
     stream_limit_per_host: -1,
     dns_method: resolver,
