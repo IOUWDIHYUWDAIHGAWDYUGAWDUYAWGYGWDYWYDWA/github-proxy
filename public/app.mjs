@@ -16,10 +16,38 @@ function ensureFrame() {
   if (frame) return frame;
   frame = controller.createFrame();
   frame.frame.title = 'Proxy üzerinden açılan web sitesi';
-  frame.frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-modals');
-  frame.frame.setAttribute('allow', 'fullscreen');
+  
+  // Cloudflare Turnstile, HidenCloud ve bot korumalarını geçmek için tam izinli sandbox
+  frame.frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-modals allow-top-navigation-by-user-activation allow-popups-to-escape-sandbox allow-storage-access-by-user-activation');
+  frame.frame.setAttribute('allow', 'fullscreen; clipboard-read; clipboard-write; camera; microphone');
   frame.frame.setAttribute('loading', 'eager');
+
+  const patchFrameStealth = () => {
+    try {
+      const win = frame.frame.contentWindow;
+      if (win) {
+        try {
+          Object.defineProperty(win.navigator, 'webdriver', {
+            get: () => undefined,
+            configurable: true
+          });
+          delete win.navigator.__proto__.webdriver;
+        } catch {}
+
+        if (!win.chrome) {
+          win.chrome = {
+            runtime: {},
+            loadTimes: () => {},
+            csi: () => {},
+            app: { isInstalled: false }
+          };
+        }
+      }
+    } catch {}
+  };
+
   frame.frame.addEventListener('load', () => {
+    patchFrameStealth();
     el('page-status').textContent = 'Sayfa yüklendi';
     try { el('address').value = frame.url.href; } catch { }
     frame.frame.contentDocument?.addEventListener('click', async event => {

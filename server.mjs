@@ -65,6 +65,17 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
         }
       }
 
+      // Orijinal Chrome kimliği sağla
+      const defaultChromeUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+      if (!headers['user-agent'] || /node|undici/i.test(headers['user-agent'])) {
+        headers['user-agent'] = defaultChromeUA;
+      }
+      headers['sec-ch-ua'] ||= '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"';
+      headers['sec-ch-ua-mobile'] ||= '?0';
+      headers['sec-ch-ua-platform'] ||= '"Windows"';
+      headers['accept-language'] ||= 'tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7';
+      headers['accept'] ||= 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7';
+
       const fetchOptions = {
         method: req.method,
         headers,
@@ -79,8 +90,15 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
       res.status(upstreamRes.status);
       
       upstreamRes.headers.forEach((val, key) => {
-        if (key.toLowerCase() !== 'content-encoding' && key.toLowerCase() !== 'transfer-encoding') {
-          res.setHeader(key, val);
+        const lowerKey = key.toLowerCase();
+        // Sıkıştırma ve çerçeve kısıtlayıcı başlıkları temizle (X-Frame-Options engellerini kaldır)
+        if (lowerKey !== 'content-encoding' && lowerKey !== 'transfer-encoding' && lowerKey !== 'x-frame-options') {
+          if (lowerKey === 'content-security-policy') {
+            const cleaned = val.replace(/frame-ancestors[^;]+;?/gi, '');
+            if (cleaned.trim()) res.setHeader(key, cleaned);
+          } else {
+            res.setHeader(key, val);
+          }
         }
       });
 
