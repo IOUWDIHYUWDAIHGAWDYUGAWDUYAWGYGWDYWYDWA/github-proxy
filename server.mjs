@@ -136,7 +136,7 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
     dotfiles: 'deny',
     maxAge: '1h',
     setHeaders: (res, path) => {
-      if (path.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache');
+      if (path.endsWith('.html') || /[\\/](?:sw\.js|proxy-storage\.js|app\.mjs)$/.test(path)) res.setHeader('Cache-Control', 'no-cache');
       else res.setHeader('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
     }
   }));

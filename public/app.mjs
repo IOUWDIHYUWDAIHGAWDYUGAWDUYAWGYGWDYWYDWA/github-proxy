@@ -82,10 +82,8 @@ async function initialize() {
     saveDownload(event.download.body, event.download.filename || new URL(event.download.url).pathname.split('/').pop(), event.download.type).catch(error => setError('browser-error', error));
   });
 
-  const swRegistration = navigator.serviceWorker.register('/sw.js', { scope: '/' });
-  const controllerInit = controller.init();
-
-  await Promise.all([swRegistration, controllerInit]);
+  await controller.init();
+  await navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' });
   await navigator.serviceWorker.ready;
 
   if (!navigator.serviceWorker.controller) {
@@ -103,7 +101,7 @@ async function initialize() {
 
 // Sayfa açılır açılmaz arka planda Wasm, worker ve service worker'ı hemen ısıt
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+  navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).catch(() => {});
 }
 
 async function navigate(input) {

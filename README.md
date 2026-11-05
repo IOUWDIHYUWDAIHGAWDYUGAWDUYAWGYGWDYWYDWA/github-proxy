@@ -38,6 +38,9 @@ Backend testleri hatalı URL'leri, giriş/CSRF denetimini, oturum iptalini, yetk
 
 ## Testler
 
+Proxy motorunun IndexedDB tabloları hem sayfada hem service worker’da açılıştan önce oluşturulur. Eksik eski `$scramjet` veritabanı silinmez; uygulama ayrı bir veritabanı kullanır. Önceki hedef site oturumları taşınmadığından yeniden giriş gerekebilir. Uygulama veritabanının sürüm yükseltmesi mevcut kayıtları koruyarak eksik tabloları ekler.
+
+
 ```powershell
 npm test
 npx playwright install chromium
