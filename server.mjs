@@ -48,6 +48,49 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
     next();
   });
   app.get('/healthz', (req, res) => res.json({ status: 'ok' }));
+
+  // Doğrudan API tünelleme köprüsü (/api/fetch)
+  app.use('/api/fetch', express.raw({ type: '*/*', limit: '50mb' }));
+  app.all('/api/fetch', async (req, res) => {
+    const targetUrl = req.headers['x-target-url'];
+    if (!targetUrl || !/^https?:\/\//i.test(targetUrl)) {
+      return res.status(400).send('Hedef URL (x-target-url header) gecersiz veya eksik.');
+    }
+
+    try {
+      const headers = {};
+      for (const [k, v] of Object.entries(req.headers)) {
+        if (!k.startsWith('x-target') && k !== 'host' && k !== 'content-length' && k !== 'connection') {
+          headers[k] = v;
+        }
+      }
+
+      const fetchOptions = {
+        method: req.method,
+        headers,
+        redirect: 'manual'
+      };
+
+      if (['POST', 'PUT', 'PATCH'].includes(req.method) && req.body && req.body.length > 0) {
+        fetchOptions.body = req.body;
+      }
+
+      const upstreamRes = await fetch(targetUrl, fetchOptions);
+      res.status(upstreamRes.status);
+      
+      upstreamRes.headers.forEach((val, key) => {
+        if (key.toLowerCase() !== 'content-encoding' && key.toLowerCase() !== 'transfer-encoding') {
+          res.setHeader(key, val);
+        }
+      });
+
+      const buffer = Buffer.from(await upstreamRes.arrayBuffer());
+      res.send(buffer);
+    } catch (err) {
+      res.status(502).send(`Upstream Fetch Hatasi: ${err.message}`);
+    }
+  });
+
   app.use('/api', (req, res, next) => {
     if (req.method !== 'GET' && req.headers.origin !== originFor(req)) return res.status(403).json({ error: 'İstek kaynağı kabul edilmedi.' });
     next();
