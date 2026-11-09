@@ -34,14 +34,17 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD, usern
     if (session) { for (const socket of session.sockets) socket.destroy(); sessions.delete(token); }
     return null;
   };
-  const cookie = (value, maxAge) => `${cookieName}=${value}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${maxAge}${publicOrigin ? '; Secure' : ''}`;
+
+  // GitHub Pages ve cross-origin iframe embedding desteği için cookie yapılandırması
+  const cookie = (value, maxAge) => `${cookieName}=${value}; Path=/; HttpOnly; ${publicOrigin ? 'SameSite=None; Secure; Partitioned;' : 'SameSite=Strict;'} Max-Age=${maxAge}`;
+
   app.use((req, res, next) => {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
-    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Referrer-Policy', 'no-referrer');
-    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    // GitHub Pages üzerinden doğrudan gömülü erişime izin ver
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.github.io https://*.trycloudflare.com");
     if (!req.path.startsWith('/scramjet') && !req.path.startsWith('/baremux') && !req.path.startsWith('/epoxy') && !req.path.match(/\.(?:js|mjs|wasm|css|svg|png|ico|woff2?)$/)) {
       res.setHeader('Cache-Control', 'no-store');
     }
