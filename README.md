@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://configurations-professor-accepts-ireland.trycloudflare.com](https://configurations-professor-accepts-ireland.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://answers-chancellor-choosing-homework.trycloudflare.com](https://answers-chancellor-choosing-homework.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 9.11.2026 13:53 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 9.11.2026 13:56 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
