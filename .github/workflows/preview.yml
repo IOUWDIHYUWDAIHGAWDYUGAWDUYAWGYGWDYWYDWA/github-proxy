@@ -9,7 +9,7 @@ on:
   schedule:
     - cron: '0 */5 * * *'
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -24,6 +24,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          token: ${{ secrets.WORKFLOW_TRIGGER_TOKEN || github.token }}
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
@@ -65,14 +67,42 @@ jobs:
         env:
           PREVIEW_INFO: /tmp/github-proxy-preview/info.json
         run: node scripts/build-portal.mjs
+      - name: Update README with live tunnel
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          node scripts/update-readme.mjs
+          if ! git diff --quiet README.md; then
+            git add README.md
+            git commit -m "chore: update live tunnel URL in README [skip ci]" || true
+            git push origin main || true
+          fi
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: portal-dist
       - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         id: deployment
-      - name: Automatic test window (ends automatically)
+      - name: Automatic test window and hourly README refresh
         run: |
+          # Her saat başı README'deki süreyi otomatik tazeleyen arka plan görevi
+          (
+            while true; do
+              sleep 3600
+              if [ ! -f /tmp/github-proxy-preview/info.json ]; then break; fi
+              git pull --rebase origin main || true
+              node scripts/update-readme.mjs
+              if ! git diff --quiet README.md; then
+                git add README.md
+                git commit -m "chore: refresh remaining time in README [skip ci]" || true
+                git push origin main || true
+              fi
+            done
+          ) &
+          HOURLY_PID=$!
+
+          # Oturum süresi boyunca bekle
           node --input-type=module -e "import {readFile} from 'node:fs/promises';const info=JSON.parse(await readFile('/tmp/github-proxy-preview/info.json','utf8'));await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(info.expiresAt)-Date.now())));"
+          kill "$HOURLY_PID" 2>/dev/null || true
       - name: Trigger next run automatically
         if: always() && !cancelled()
         env:

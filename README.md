@@ -1,5 +1,13 @@
 # github proxy
 
+<!-- LIVE_PREVIEW_STATUS:START -->
+> ### 🟢 CANLI PROXY TÜNELİ AKTİF
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://sink-northeast-cook-calculators.trycloudflare.com](https://sink-northeast-cook-calculators.trycloudflare.com)
+> * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
+> * ⏱️ **Kalan Süre:** ~5 saat 41 dakika (Bitiş: 9.11.2026 13:46 TSİ)
+> * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
+<!-- LIVE_PREVIEW_STATUS:END -->
+
 Adres veya arama yazarak hedef siteyi sayfa içinde açan, giriş korumalı bir **web proxy**. Uzak Chrome görüntüsü yerine HTML, CSS ve JavaScript yeniden yazımı kullanır.
 
 Tüm bilgisayar için ayrı Windows istemcisi: [github proxy VPN](desktop/README.md). Tailscale kullanmaz; resmî WireGuard bileşeni ve ayrı sunucuya ait `.conf` gerektirir. Web proxy URL'sini VPN sunucusuna dönüştürmez.
