@@ -14,8 +14,8 @@ const digest = value => createHash('sha256').update(String(value || '')).digest(
 const equal = (a, b) => timingSafeEqual(digest(a), digest(b));
 const cookieName = 'gp_session';
 
-export function createProxyServer({ password = process.env.PROXY_PASSWORD, username = process.env.PROXY_USER || 'proxy', publicOrigin = process.env.PUBLIC_ORIGIN, sessionMs = 8 * 60 * 60 * 1000, network = {} } = {}) {
-  if (!password || password.length < 16) throw new Error('PROXY_PASSWORD en az 16 karakter olmalı. Önce npm run setup çalıştır.');
+export function createProxyServer({ password = process.env.PROXY_PASSWORD || '@hmet355', username = process.env.PROXY_USER || 'proxy', publicOrigin = process.env.PUBLIC_ORIGIN, sessionMs = 8 * 60 * 60 * 1000, network = {} } = {}) {
+  if (!password || password.length < 6) throw new Error('PROXY_PASSWORD en az 6 karakter olmalı.');
   if (publicOrigin && !/^https:\/\//.test(publicOrigin)) throw new Error('PUBLIC_ORIGIN https:// ile başlamalı.');
   configureNetwork(network);
   logging.set_level(logging.NONE);
