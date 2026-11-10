@@ -4,7 +4,7 @@
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
 > * 🔗 **Doğrudan Cloudflare Adresi:** [https://terrain-off-bare-bulk.trycloudflare.com](https://terrain-off-bare-bulk.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 11.11.2026 02:21 TSİ)
+> * ⏱️ **Kalan Süre:** ~4 saat 45 dakika (Bitiş: 11.11.2026 02:21 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
