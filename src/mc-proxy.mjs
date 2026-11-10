@@ -115,11 +115,6 @@ export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
   });
 
   // 2. Same-Origin Minecraft Web Client Reverse Proxy (/mc-play/*)
-  app.get('/mc-play', (req, res) => {
-    const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
-    res.redirect(302, `/mc-play/${qs}`);
-  });
-
   app.get('/mc-play/service-worker.js', (req, res) => {
     res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
     res.setHeader('Cache-Control', 'no-store');
@@ -127,6 +122,10 @@ export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
   });
 
   app.use('/mc-play', async (req, res) => {
+    if (req.originalUrl.split('?')[0] === '/mc-play') {
+      const qs = req.originalUrl.includes('?') ? req.originalUrl.slice(req.originalUrl.indexOf('?')) : '';
+      return res.redirect(302, `/mc-play/${qs}`);
+    }
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       return res.status(405).send('Method Not Allowed');
     }

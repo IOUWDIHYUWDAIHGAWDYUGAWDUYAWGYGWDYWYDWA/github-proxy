@@ -47,4 +47,9 @@ test('Minecraft TCP proxy endpoint returns capabilities, blocks private IPs and 
   assert.equal(swRes.status, 200);
   const swBody = await swRes.text();
   assert.match(swBody, /skipWaiting/);
+
+  // 6. /mc-play trailing slash redirect without loop
+  const noSlashRes = await fetch(`${base}/mc-play?version=1.21.11`, { redirect: 'manual' });
+  assert.equal(noSlashRes.status, 302);
+  assert.equal(noSlashRes.headers.get('location'), '/mc-play/?version=1.21.11');
 });
