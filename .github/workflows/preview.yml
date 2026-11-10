@@ -104,7 +104,7 @@ jobs:
           node --input-type=module -e "import {readFile} from 'node:fs/promises';const info=JSON.parse(await readFile('/tmp/github-proxy-preview/info.json','utf8'));await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(info.expiresAt)-Date.now())));"
           kill "$HOURLY_PID" 2>/dev/null || true
       - name: Trigger next run automatically
-        if: always() && !cancelled()
+        if: success()
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TRIGGER_TOKEN }}
         run: |
@@ -125,16 +125,16 @@ jobs:
           retention-days: 1
           if-no-files-found: ignore
       - name: Build closed portal
-        if: always() && !cancelled()
+        if: success()
         run: node scripts/build-portal.mjs
       - name: Upload closed portal
-        if: always() && !cancelled()
+        if: success()
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: portal-dist
           name: github-pages-closed
       - name: Publish closed portal
-        if: always() && !cancelled()
+        if: success()
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
         with:
           artifact_name: github-pages-closed
