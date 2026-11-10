@@ -4,7 +4,7 @@
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
 > * 🔗 **Doğrudan Cloudflare Adresi:** [https://lip-waters-commissions-converted.trycloudflare.com](https://lip-waters-commissions-converted.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 11.11.2026 03:52 TSİ)
+> * ⏱️ **Kalan Süre:** ~4 saat 45 dakika (Bitiş: 11.11.2026 03:52 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
