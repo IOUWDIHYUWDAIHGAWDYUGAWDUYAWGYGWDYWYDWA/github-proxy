@@ -57,8 +57,57 @@
       <p class="error browser-error" id="browser-error" role="alert"></p>
     </section>
 
+    <!-- MİNECRAFT 1.21.11 + GITHUB AĞ KÖPRÜSÜ -->
+    <section class="mc-panel" id="minecraft-panel" hidden aria-label="Minecraft 1.21.11 GitHub Proxy">
+      <div class="mc-header">
+        <div>
+          <span class="small-label">OYUN TÜNELİ · GITHUB ACTIONS AĞI</span>
+          <h2>🎮 Minecraft 1.21.11 <span class="mc-badge">GitHub İnternetiyle</span></h2>
+          <p class="mc-desc">Minecraft sunucularına doğrudan GitHub sunucusunun interneti ve IP adresi üzerinden bağlanır.</p>
+        </div>
+        <div class="mc-bridge-box">
+          <span class="mc-bridge-label">TCP Ağ Köprüsü:</span>
+          <code id="mc-proxy-url">Yükleniyor...</code>
+          <button type="button" id="mc-copy-proxy" class="mc-btn-sm">Kopyala</button>
+        </div>
+      </div>
+
+      <form id="mc-form" class="mc-controls">
+        <label>
+          <span>Sunucu IP (İsteğe Bağlı)</span>
+          <input id="mc-ip" placeholder="ör: play.aternos.me veya boş bırakın" autocomplete="off" spellcheck="false">
+        </label>
+        <label>
+          <span>Oyuncu Adı</span>
+          <input id="mc-user" value="Oyuncu" placeholder="Kullanıcı adı" maxlength="16" required>
+        </label>
+        <label>
+          <span>Sürüm</span>
+          <select id="mc-version">
+            <option value="1.21.11" selected>1.21.11 (Önerilen)</option>
+            <option value="">Otomatik / En Güncel</option>
+            <option value="1.21.4">1.21.4</option>
+            <option value="1.21.1">1.21.1</option>
+            <option value="1.20.4">1.20.4</option>
+            <option value="1.19.4">1.19.4</option>
+            <option value="1.12.2">1.12.2</option>
+          </select>
+        </label>
+        <div class="mc-buttons">
+          <button type="submit" class="mc-launch-btn">▶ Minecraft'ı Başlat</button>
+          <button type="button" id="mc-open-proxied" class="mc-alt-btn" title="Oyun sitesi engelliyse yukarıdaki proxy içinden aç">🌐 Proxy İçinden Aç</button>
+          <button type="button" id="mc-fullscreen" class="mc-alt-btn" hidden>⛶ Tam Ekran</button>
+          <button type="button" id="mc-close" class="mc-close-btn" hidden>✕ Kapat</button>
+        </div>
+      </form>
+
+      <div id="mc-viewport" class="mc-viewport" hidden>
+        <iframe id="mc-frame" title="Minecraft Web Client" allow="fullscreen; pointer-lock; autoplay; clipboard-read; clipboard-write" allowfullscreen></iframe>
+      </div>
+    </section>
+
     <section class="notes"><div><span>01</span><h3>Adresini yaz</h3><p>Bir URL aç veya arama yap.</p></div><div><span>02</span><h3>Buradan gezin</h3><p>Bağlantılar ve formlar proxy üzerinden geçer.</p></div><div><span>03</span><h3>Dosyalarını kullan</h3><p>Sitenin yükleme ve indirme alanlarını kullan.</p></div></section>
-    <p class="compatibility">Bazı sitelerin oturum açma, CAPTCHA, video ve dosya işlemleri uyumsuz olabilir. Bu uygulama Roblox oyun istemcisinin trafiğini taşımaz.</p>
+    <p class="compatibility">Bazı sitelerin oturum açma, CAPTCHA, video ve dosya işlemleri uyumsuz olabilir. Minecraft istemcisi sunuculara GitHub Actions üzerindeki TCP köprüsüyle bağlanır.</p>
   </main>
   <footer><span>github proxy <span class="footer-dot">/</span> kişisel web penceresi</span><a href="https://github.com/IOUWDIHYUWDAIHGAWDYUGAWDUYAWGYGWDYWYDWA/github-proxy" target="_blank" rel="noopener noreferrer">Kaynak kod ↗</a></footer>
 </body>

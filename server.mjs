@@ -8,6 +8,7 @@ import { baremuxPath } from '@mercuryworkshop/bare-mux/node';
 import { epoxyPath } from '@mercuryworkshop/epoxy-transport';
 import { server as wisp, logging } from '@mercuryworkshop/wisp-js/server';
 import { configureNetwork } from './src/network.mjs';
+import { attachMinecraftProxy } from './src/mc-proxy.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const digest = value => createHash('sha256').update(String(value || '')).digest();
@@ -112,6 +113,9 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD || '@h
     }
   });
 
+  // Minecraft WebSocket-to-TCP Ağ Köprüsü (/api/vm/net) - GitHub Actions IP üzerinden sunucu erişimi
+  const handleMinecraftUpgrade = attachMinecraftProxy(app);
+
   app.use('/api', (req, res, next) => {
     if (req.method !== 'GET' && req.headers.origin !== originFor(req)) return res.status(403).json({ error: 'İstek kaynağı kabul edilmedi.' });
     next();
@@ -170,6 +174,7 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD || '@h
     socket.on('close', () => sockets.delete(socket));
   });
   server.on('upgrade', (req, socket, head) => {
+    if (handleMinecraftUpgrade(req, socket, head)) return;
     const reject = code => socket.end(`HTTP/1.1 ${code}\r\nConnection: close\r\n\r\n`);
     if (req.url !== '/wisp/') return reject('404 Not Found');
     if (req.headers.origin !== originFor(req)) return reject('403 Forbidden');

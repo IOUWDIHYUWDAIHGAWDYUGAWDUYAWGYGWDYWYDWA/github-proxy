@@ -72,6 +72,9 @@ function setAuthenticated(authenticated) {
   el('login-card').hidden = authenticated;
   el('browser').hidden = !authenticated;
   el('logout').hidden = !authenticated;
+  const mcPanel = el('minecraft-panel');
+  if (mcPanel) mcPanel.hidden = !authenticated;
+
   el('status').textContent = authenticated ? 'Oturum açık' : 'Giriş bekleniyor';
   el('status').classList.toggle('ready', authenticated);
   if (!authenticated) {
@@ -79,7 +82,10 @@ function setAuthenticated(authenticated) {
     frame = undefined;
     document.body.classList.remove('browsing');
     el('empty-state').hidden = false;
+    if (el('mc-viewport')) el('mc-viewport').hidden = true;
+    if (el('mc-frame')) el('mc-frame').src = 'about:blank';
   } else {
+    if (el('mc-proxy-url')) el('mc-proxy-url').textContent = location.origin;
     // Giriş yapıldığı an motoru ve frame'i anında hazırla (Instant Ready)
     initialized ||= initialize().then(() => {
       ensureFrame();
@@ -154,6 +160,58 @@ async function navigate(input) {
     el('page-status').textContent = 'Adres açılamadı';
   }
 }
+
+// Minecraft 1.21.11 + GitHub Ağ Köprüsü Yardımcıları
+function buildMinecraftUrl() {
+  const ip = el('mc-ip')?.value.trim() || '';
+  const user = el('mc-user')?.value.trim() || 'Oyuncu';
+  const ver = el('mc-version')?.value || '';
+  const mcUrl = new URL('https://s.mcraft.fun/');
+  mcUrl.searchParams.set('proxy', location.origin);
+  mcUrl.searchParams.set('username', user);
+  if (ip) mcUrl.searchParams.set('ip', ip);
+  if (ver) mcUrl.searchParams.set('version', ver);
+  return mcUrl.toString();
+}
+
+el('mc-form')?.addEventListener('submit', event => {
+  event.preventDefault();
+  const mcUrl = buildMinecraftUrl();
+  el('mc-viewport').hidden = false;
+  el('mc-fullscreen').hidden = false;
+  el('mc-close').hidden = false;
+  el('mc-frame').src = mcUrl;
+  el('mc-viewport').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+el('mc-open-proxied')?.addEventListener('click', () => {
+  navigate(buildMinecraftUrl());
+  el('browser').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+el('mc-fullscreen')?.addEventListener('click', async () => {
+  try {
+    const vp = el('mc-viewport');
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await vp.requestFullscreen();
+  } catch {}
+});
+
+el('mc-close')?.addEventListener('click', () => {
+  el('mc-viewport').hidden = true;
+  el('mc-fullscreen').hidden = true;
+  el('mc-close').hidden = true;
+  el('mc-frame').src = 'about:blank';
+});
+
+el('mc-copy-proxy')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(location.origin);
+    const btn = el('mc-copy-proxy');
+    btn.textContent = 'Kopyalandı ✓';
+    setTimeout(() => { btn.textContent = 'Kopyala'; }, 2000);
+  } catch {}
+});
 
 el('login-form').addEventListener('submit', async event => {
   event.preventDefault();
