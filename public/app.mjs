@@ -161,12 +161,14 @@ async function navigate(input) {
   }
 }
 
-// Minecraft 1.21.11 + GitHub Ağ Köprüsü Yardımcıları
-function buildMinecraftUrl() {
+// Minecraft 1.21.11 + GitHub Ağ Köprüsü Yardımcıları (Same-Origin /mc-play + CORS-Free Resource Pack)
+function buildMinecraftUrl(useLocalMirror = true) {
   const ip = el('mc-ip')?.value.trim() || '';
   const user = el('mc-user')?.value.trim() || 'Oyuncu';
   const ver = el('mc-version')?.value || '';
-  const mcUrl = new URL('https://s.mcraft.fun/');
+  const mcUrl = useLocalMirror
+    ? new URL('/mc-play/', location.origin)
+    : new URL('https://s.mcraft.fun/');
   mcUrl.searchParams.set('proxy', location.origin);
   mcUrl.searchParams.set('username', user);
   if (ip) mcUrl.searchParams.set('ip', ip);
@@ -176,7 +178,7 @@ function buildMinecraftUrl() {
 
 el('mc-form')?.addEventListener('submit', event => {
   event.preventDefault();
-  const mcUrl = buildMinecraftUrl();
+  const mcUrl = buildMinecraftUrl(true);
   el('mc-viewport').hidden = false;
   el('mc-fullscreen').hidden = false;
   el('mc-close').hidden = false;
@@ -185,7 +187,7 @@ el('mc-form')?.addEventListener('submit', event => {
 });
 
 el('mc-open-proxied')?.addEventListener('click', () => {
-  navigate(buildMinecraftUrl());
+  navigate(buildMinecraftUrl(false));
   el('browser').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 

@@ -1,19 +1,182 @@
 import net from 'node:net';
 import { resolveSrv } from 'node:dns/promises';
 import { randomBytes } from 'node:crypto';
+import { Readable } from 'node:stream';
 import express from 'express';
 import { WebSocketServer } from 'ws';
 import { createSafeResolver, isPublicAddress } from './network.mjs';
 
+const MC_UPSTREAM = 'https://s.mcraft.fun';
+
+const MC_FETCH_INTERCEPTOR = `<script>
+(function () {
+  var origFetch = window.fetch;
+  var proxyPattern = /(\\.zip(\\?|$)|mc-packs\\.net|resourcepack|pack\\.zip|[?&]dl=1)/i;
+
+  window.fetch = async function (input, init) {
+    var urlStr = typeof input === 'string' ? input : (input && input.url ? input.url : String(input));
+    try {
+      var u = new URL(urlStr, location.href);
+      if (u.origin !== location.origin && (u.protocol === 'http:' || u.protocol === 'https:')) {
+        var needsDirectProxy = u.protocol === 'http:' || proxyPattern.test(u.href);
+        if (needsDirectProxy) {
+          return await fetchViaBridge(u.href, input, init);
+        }
+        try {
+          var res = await origFetch.apply(this, arguments);
+          if (!res.ok && res.status === 0) throw new Error('Opaque response');
+          return res;
+        } catch (err) {
+          return await fetchViaBridge(u.href, input, init);
+        }
+      }
+    } catch (e) {}
+    return origFetch.apply(this, arguments);
+  };
+
+  async function fetchViaBridge(targetHref, input, init) {
+    var bridgeUrl = '/api/mc-fetch?url=' + encodeURIComponent(targetHref);
+    var opts = Object.assign({}, init || {});
+    if (input instanceof Request) {
+      if (!opts.method) opts.method = input.method;
+      if (!opts.headers) opts.headers = input.headers;
+      if (!opts.body && input.method !== 'GET' && input.method !== 'HEAD') {
+        try { opts.body = await input.clone().arrayBuffer(); } catch (e) {}
+      }
+    }
+    return origFetch.call(window, bridgeUrl, opts);
+  }
+})();
+</script>`;
+
 /**
- * Attaches mwc-proxy compatible WebSocket-to-TCP bridge (/api/vm/net/*)
- * so Minecraft Web Client (1.8 - 1.21.11+) can connect to real Minecraft servers
- * through the GitHub Actions server's network and IP address.
+ * Attaches mwc-proxy compatible WebSocket-to-TCP bridge (/api/vm/net/*),
+ * CORS-free Resource Pack bridge (/api/mc-fetch),
+ * and same-origin reverse proxy for Minecraft Web Client (/mc-play/*).
  */
 export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
   const mcSockets = new Map();
   const mcWss = new WebSocketServer({ noServer: true });
 
+  // 1. CORS-Free & Redirect-Safe Resource Pack / Asset Fetch Köprüsü (/api/mc-fetch)
+  app.all('/api/mc-fetch', async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, HEAD, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+
+    const targetUrl = String(req.query.url || req.headers['x-target-url'] || '').trim();
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(targetUrl);
+      if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+        return res.status(400).send('Yalnızca HTTP/HTTPS URL desteklenir.');
+      }
+    } catch {
+      return res.status(400).send('Geçersiz hedef URL.');
+    }
+
+    try {
+      // SSRF koruması: Hedef alan adının/IP'nin genel internette olduğunu doğrula
+      const host = parsedUrl.hostname;
+      if (net.isIP(host) !== 0) {
+        if (!isPublicAddress(host)) return res.status(403).send('Özel ağ adresine izin verilmiyor.');
+      } else {
+        await safeResolve(host);
+      }
+
+      const upstreamRes = await fetch(parsedUrl.href, {
+        method: req.method === 'HEAD' ? 'HEAD' : 'GET',
+        headers: {
+          'User-Agent': 'Minecraft Java/1.21.11',
+          'Accept': '*/*'
+        },
+        redirect: 'follow'
+      });
+
+      res.status(upstreamRes.status);
+      const passHeaders = ['content-type', 'content-length', 'content-disposition', 'etag', 'last-modified', 'cache-control'];
+      for (const h of passHeaders) {
+        const v = upstreamRes.headers.get(h);
+        if (v) res.setHeader(h, v);
+      }
+
+      if (req.method === 'HEAD' || !upstreamRes.body) {
+        return res.end();
+      }
+
+      Readable.fromWeb(upstreamRes.body).pipe(res);
+    } catch (err) {
+      if (!res.headersSent) {
+        res.status(502).send(`Resource pack indirilemedi: ${err.message}`);
+      }
+    }
+  });
+
+  // 2. Same-Origin Minecraft Web Client Reverse Proxy (/mc-play/*)
+  app.get('/mc-play', (req, res) => {
+    const qs = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+    res.redirect(302, `/mc-play/${qs}`);
+  });
+
+  app.get('/mc-play/service-worker.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-store');
+    res.send('self.addEventListener("install",()=>self.skipWaiting());self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));');
+  });
+
+  app.use('/mc-play', async (req, res) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      return res.status(405).send('Method Not Allowed');
+    }
+
+    try {
+      const subPath = req.url === '/' ? '/' : req.url;
+      const target = `${MC_UPSTREAM}${subPath}`;
+      const upstreamRes = await fetch(target, {
+        method: req.method,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+          'Accept': req.headers.accept || '*/*'
+        },
+        redirect: 'follow'
+      });
+
+      res.status(upstreamRes.status);
+      const contentType = upstreamRes.headers.get('content-type') || 'application/octet-stream';
+      res.setHeader('Content-Type', contentType);
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.github.io https://*.trycloudflare.com");
+
+      if (contentType.includes('text/html')) {
+        res.setHeader('Cache-Control', 'no-store');
+        let html = await upstreamRes.text();
+        if (html.includes('<head>')) {
+          html = html.replace('<head>', `<head>\n${MC_FETCH_INTERCEPTOR}`);
+        } else {
+          html = `${MC_FETCH_INTERCEPTOR}\n${html}`;
+        }
+        return res.send(html);
+      }
+
+      const cc = upstreamRes.headers.get('cache-control');
+      res.setHeader('Cache-Control', cc || 'public, max-age=3600');
+      const cl = upstreamRes.headers.get('content-length');
+      if (cl) res.setHeader('Content-Length', cl);
+
+      if (req.method === 'HEAD' || !upstreamRes.body) {
+        return res.end();
+      }
+      Readable.fromWeb(upstreamRes.body).pipe(res);
+    } catch (err) {
+      if (!res.headersSent) {
+        res.status(502).send(`Minecraft istemcisi yüklenemedi: ${err.message}`);
+      }
+    }
+  });
+
+  // 3. WebSocket-to-TCP Köprüsü (/api/vm/net/*)
   const router = express.Router();
 
   // CORS desteği (mcraft.fun, github.io ve proxy originlerinden erişim için)

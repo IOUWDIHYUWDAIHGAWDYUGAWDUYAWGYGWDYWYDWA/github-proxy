@@ -22,7 +22,7 @@ test('Minecraft TCP proxy endpoint returns capabilities, blocks private IPs and 
   assert.equal(info.version, '0.0.4');
   assert.equal(info.capabilities.ping, true);
 
-  // 2. Private IP SSRF protection
+  // 2. Private IP SSRF protection on TCP connect
   const privateRes = await fetch(`${base}/api/vm/net/connect`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Origin: 'https://s.mcraft.fun' },
@@ -30,11 +30,21 @@ test('Minecraft TCP proxy endpoint returns capabilities, blocks private IPs and 
   });
   assert.equal(privateRes.status, 403);
 
-  // 3. WebSocket ping endpoint check
+  // 3. Private IP SSRF protection on /api/mc-fetch (Resource Pack CORS bridge)
+  const fetchPrivateRes = await fetch(`${base}/api/mc-fetch?url=${encodeURIComponent('http://127.0.0.1:8080/pack.zip')}`);
+  assert.equal(fetchPrivateRes.status, 403);
+
+  // 4. WebSocket ping endpoint check
   const ws = new WebSocket(`${base.replace('http:', 'ws:')}/api/vm/net/ping`);
   await once(ws, 'open');
   ws.send('ping:42');
   const [reply] = await once(ws, 'message');
   assert.match(reply.toString(), /^pong:42:/);
   ws.close();
+
+  // 5. /mc-play/service-worker.js passthrough check
+  const swRes = await fetch(`${base}/mc-play/service-worker.js`);
+  assert.equal(swRes.status, 200);
+  const swBody = await swRes.text();
+  assert.match(swBody, /skipWaiting/);
 });
