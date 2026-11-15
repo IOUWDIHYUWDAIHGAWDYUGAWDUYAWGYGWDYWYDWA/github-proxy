@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://sheer-feb-letters-infectious.trycloudflare.com](https://sheer-feb-letters-infectious.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://unix-williams-pole-travis.trycloudflare.com](https://unix-williams-pole-travis.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~44 dakika (Bitiş: 15.11.2026 08:31 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 44 dakika (Bitiş: 15.11.2026 14:17 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
