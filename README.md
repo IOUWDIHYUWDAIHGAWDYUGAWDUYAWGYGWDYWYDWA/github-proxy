@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://entertaining-accompanying-graphics-authority.trycloudflare.com](https://entertaining-accompanying-graphics-authority.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://surge-holidays-arrow-knives.trycloudflare.com](https://surge-holidays-arrow-knives.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~45 dakika (Bitiş: 16.11.2026 01:37 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 16.11.2026 07:23 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
