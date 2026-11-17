@@ -4,7 +4,7 @@
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
 > * 🔗 **Doğrudan Cloudflare Adresi:** [https://referred-memory-apparel-counted.trycloudflare.com](https://referred-memory-apparel-counted.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~1 saat 44 dakika (Bitiş: 17.11.2026 04:54 TSİ)
+> * ⏱️ **Kalan Süre:** ~44 dakika (Bitiş: 17.11.2026 04:54 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
