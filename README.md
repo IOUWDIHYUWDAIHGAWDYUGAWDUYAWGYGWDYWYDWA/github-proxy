@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://hamilton-allen-unable-spelling.trycloudflare.com](https://hamilton-allen-unable-spelling.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://contacting-cycle-quad-obligation.trycloudflare.com](https://contacting-cycle-quad-obligation.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~45 dakika (Bitiş: 18.11.2026 22:29 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 19.11.2026 04:15 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
