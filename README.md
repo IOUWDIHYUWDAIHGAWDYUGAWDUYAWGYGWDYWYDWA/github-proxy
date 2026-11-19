@@ -4,7 +4,7 @@
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
 > * 🔗 **Doğrudan Cloudflare Adresi:** [https://ought-brown-endorsed-mistress.trycloudflare.com](https://ought-brown-endorsed-mistress.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~1 saat 45 dakika (Bitiş: 19.11.2026 21:16 TSİ)
+> * ⏱️ **Kalan Süre:** ~45 dakika (Bitiş: 19.11.2026 21:16 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
