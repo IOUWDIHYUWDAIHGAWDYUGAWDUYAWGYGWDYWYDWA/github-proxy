@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://corners-slide-fancy-assumes.trycloudflare.com](https://corners-slide-fancy-assumes.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://stunning-fits-scientists-runner.trycloudflare.com](https://stunning-fits-scientists-runner.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~45 dakika (Bitiş: 25.11.2026 05:18 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 44 dakika (Bitiş: 25.11.2026 11:05 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
