@@ -1,5 +1,6 @@
 import express from 'express';
 import { createServer } from 'node:http';
+import { Readable } from 'node:stream';
 import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -106,8 +107,10 @@ export function createProxyServer({ password = process.env.PROXY_PASSWORD || '@h
         }
       });
 
-      const buffer = Buffer.from(await upstreamRes.arrayBuffer());
-      res.send(buffer);
+      if (!upstreamRes.body || req.method === 'HEAD') {
+        return res.end();
+      }
+      Readable.fromWeb(upstreamRes.body).pipe(res);
     } catch (err) {
       res.status(502).send(`Upstream Fetch Hatasi: ${err.message}`);
     }

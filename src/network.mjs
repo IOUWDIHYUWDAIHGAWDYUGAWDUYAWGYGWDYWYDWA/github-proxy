@@ -10,7 +10,7 @@ export function isPublicAddress(value) {
   } catch { return false; }
 }
 
-export function createSafeResolver(resolve = lookup, { ttlMs = 30_000, maxEntries = 256, now = Date.now } = {}) {
+export function createSafeResolver(resolve = lookup, { ttlMs = 300_000, maxEntries = 1024, now = Date.now } = {}) {
   if (!Number.isFinite(ttlMs) || ttlMs < 0 || !Number.isInteger(maxEntries) || maxEntries < 1) throw new Error('Invalid DNS cache settings');
   const cache = new Map();
   const pending = new Map();

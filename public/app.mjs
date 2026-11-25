@@ -1,7 +1,7 @@
 import { addressToUrl } from './address.mjs';
 import { downloadName, saveDownload } from './download.mjs';
 const el = id => document.getElementById(id);
-let frame, controller, initialized;
+let frame, controller, initialized, isAuthenticated = false;
 let authRevision = 0;
 const setError = (id, error) => el(id).textContent = error?.message || String(error || '');
 
@@ -69,6 +69,7 @@ function ensureFrame() {
 }
 
 function setAuthenticated(authenticated) {
+  isAuthenticated = authenticated;
   el('login-card').hidden = authenticated;
   el('browser').hidden = !authenticated;
   el('logout').hidden = !authenticated;
@@ -142,7 +143,7 @@ async function navigate(input) {
   setError('browser-error', '');
   try {
     const url = addressToUrl(input);
-    if (!(await api('session')).authenticated) {
+    if (!isAuthenticated) {
       setAuthenticated(false);
       throw new Error('Oturumun kapandı. Tekrar giriş yap.');
     }
