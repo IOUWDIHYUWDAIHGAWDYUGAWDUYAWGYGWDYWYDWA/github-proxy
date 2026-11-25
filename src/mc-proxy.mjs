@@ -279,6 +279,7 @@ export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
         }
 
         const token = randomBytes(24).toString('hex');
+        socket.pause();
         const connectTimer = setTimeout(() => {
           const pending = mcSockets.get(token);
           if (pending) {
@@ -287,6 +288,14 @@ export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
           }
         }, 30_000);
         connectTimer.unref();
+
+        socket.once('close', () => {
+          const pending = mcSockets.get(token);
+          if (pending) {
+            clearTimeout(pending.connectTimer);
+            mcSockets.delete(token);
+          }
+        });
 
         mcSockets.set(token, { socket, connectTimer });
 
@@ -341,10 +350,11 @@ export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
 
       mcWss.handleUpgrade(req, socket, head, ws => {
         tcpSocket.setTimeout(0);
+        tcpSocket.resume();
 
-        ws.on('message', data => {
-          if (typeof data === 'string' && data.startsWith('ping:')) {
-            ws.send(`pong:${data.slice(5)}`);
+        ws.on('message', (data, isBinary) => {
+          if (!isBinary && data.toString().startsWith('ping:')) {
+            ws.send(`pong:${data.toString().slice(5)}`);
             return;
           }
           if (!tcpSocket.destroyed) {
@@ -365,6 +375,7 @@ export function attachMinecraftProxy(app, safeResolve = createSafeResolver()) {
 
         ws.on('close', cleanup);
         ws.on('error', cleanup);
+        tcpSocket.on('end', cleanup);
         tcpSocket.on('close', cleanup);
         tcpSocket.on('error', cleanup);
       });
