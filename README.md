@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://stunning-fits-scientists-runner.trycloudflare.com](https://stunning-fits-scientists-runner.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://remark-dreams-cognitive-that.trycloudflare.com](https://remark-dreams-cognitive-that.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~5 saat 44 dakika (Bitiş: 25.11.2026 11:05 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 25.11.2026 13:45 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
