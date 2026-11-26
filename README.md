@@ -4,7 +4,7 @@
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
 > * 🔗 **Doğrudan Cloudflare Adresi:** [https://constantly-pac-floyd-captured.trycloudflare.com](https://constantly-pac-floyd-captured.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~2 saat 45 dakika (Bitiş: 26.11.2026 11:28 TSİ)
+> * ⏱️ **Kalan Süre:** ~1 saat 45 dakika (Bitiş: 26.11.2026 11:28 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
