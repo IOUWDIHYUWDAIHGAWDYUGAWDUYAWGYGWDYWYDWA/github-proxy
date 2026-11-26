@@ -2,9 +2,9 @@
 
 <!-- LIVE_PREVIEW_STATUS:START -->
 > ### 🟢 CANLI PROXY TÜNELİ AKTİF
-> * 🔗 **Doğrudan Cloudflare Adresi:** [https://classical-undo-forecast-involving.trycloudflare.com](https://classical-undo-forecast-involving.trycloudflare.com)
+> * 🔗 **Doğrudan Cloudflare Adresi:** [https://forms-reached-permits-athens.trycloudflare.com](https://forms-reached-permits-athens.trycloudflare.com)
 > * 🌐 **Sabit GitHub Pages Sayfası:** [https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/](https://iouwdihyuwdaihgawdyugawduyawgygwdywydwa.github.io/github-proxy/)
-> * ⏱️ **Kalan Süre:** ~45 dakika (Bitiş: 26.11.2026 04:35 TSİ)
+> * ⏱️ **Kalan Süre:** ~5 saat 45 dakika (Bitiş: 26.11.2026 10:21 TSİ)
 > * ⚡ **Yenileme:** Oturum otomatik olarak yenilenir veya Actions üzerinden dilediğiniz an sıfırlanabilir.
 <!-- LIVE_PREVIEW_STATUS:END -->
 
